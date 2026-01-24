@@ -7,10 +7,14 @@ import ProjectsSection from "@/components/sections/ProjectsSection";
 import ArchitectureSection from "@/components/sections/ArchitectureSection";
 import ContactSection from "@/components/sections/ContactSection";
 import Footer from "@/components/sections/Footer";
+import ParticleBackground from "@/components/ParticleBackground";
+import CustomCursor from "@/components/CustomCursor";
 
 const Index = () => {
   return (
     <main className="min-h-screen bg-background text-foreground overflow-x-hidden">
+      <ParticleBackground />
+      <CustomCursor />
       <Navbar />
       <HeroSection />
       <AboutSection />
