@@ -6,6 +6,7 @@ export interface Project {
   description: string;
   techStack: string[];
   highlights: string[];
+  role?: string;
   image?: string;
   link?: string;
   github?: string;
@@ -35,47 +36,35 @@ export interface Experience {
 
 export const profileData = {
   name: "Mohammed Ilyas B",
-  role: "Senior Front-End Developer",
+  role: "Technology Analyst / Angular Developer",
   tagline: "Building high-performance, enterprise-grade web applications",
-  email: "contact@mohammedilyas.dev",
-  linkedin: "https://linkedin.com/in/mohammedilyas",
+  email: "Ilyas.fa007@gmail.com",
+  phone: "+91 7397751255",
+  linkedin: "https://www.linkedin.com/in/ilyasb/",
   github: "https://github.com/mohammedilyas",
-  resumeUrl: "/resume.pdf",
+  resumeUrl: "/Mohammed_Ilyas_Angular.pdf",
   
   roles: [
     "Angular Specialist",
-    "Front-End Architect", 
+    "Technology Analyst", 
     "Full-Stack Developer",
-    "Performance Expert",
+    "MEAN Stack Expert",
   ],
   
-  about: `Senior Front-End Developer with 7+ years of experience specializing in Angular ecosystem 
-  (v6 to v19). I architect and build scalable, high-performance enterprise applications that handle 
-  millions of data points seamlessly. My expertise spans from creating intuitive user interfaces 
-  to implementing complex state management solutions with NgRx and Angular Signals.
-  
-  I'm passionate about clean code architecture, performance optimization, and delivering 
-  exceptional user experiences. I've led teams in building mission-critical dashboards, 
-  real-time analytics platforms, and enterprise-scale applications for global clients.`,
+  about: `Seasoned Full-Stack Developer with over 7+ years of experience architecting and delivering scalable web applications using the MEAN Stack, with deep specialization in Angular (6+ years). Adept at building responsive, high-performance interfaces and robust backend services across diverse domains including finance, e-commerce, and enterprise platforms. Recognized for precision in UI/UX animation, theme toggling, and seamless user interaction design. Proven ability to lead cross-functional teams, drive technical strategy, and ensure delivery excellence through clean architecture, optimized code, and agile collaboration.`,
 };
 
 export const skillCategories: SkillCategory[] = [
   {
     title: "Frontend",
     skills: [
-      { name: "Angular", level: 98, description: "v6 to v19, Standalone Components, Signals" },
+      { name: "Angular 6-18+", level: 98, description: "Standalone Components, Signals, RxJS" },
       { name: "TypeScript", level: 95, description: "Advanced types, Generics, Decorators" },
       { name: "RxJS", level: 92, description: "Reactive patterns, Custom operators" },
-      { name: "SCSS/CSS", level: 90, description: "Animations, Grid, Flexbox, BEM" },
+      { name: "SASS/CSS3", level: 90, description: "Animations, Bootstrap, Tailwind CSS" },
       { name: "HTML5", level: 95, description: "Semantic markup, Accessibility" },
-    ],
-  },
-  {
-    title: "State Management",
-    skills: [
-      { name: "NgRx", level: 90, description: "Store, Effects, Entity, Component Store" },
-      { name: "Angular Signals", level: 88, description: "Signal-based reactivity" },
-      { name: "RxJS State", level: 85, description: "BehaviorSubject patterns" },
+      { name: "PrimeNg", level: 88, description: "Component library, Theming" },
+      { name: "Angular Material", level: 90, description: "Material Design components" },
     ],
   },
   {
@@ -83,26 +72,38 @@ export const skillCategories: SkillCategory[] = [
     skills: [
       { name: "Node.js", level: 85, description: "Express, REST APIs, Microservices" },
       { name: "Express.js", level: 82, description: "Middleware, Authentication" },
-      { name: "MongoDB", level: 75, description: "Mongoose, Aggregation" },
-      { name: "PostgreSQL", level: 70, description: "Complex queries, Optimization" },
+      { name: "Python (Flask)", level: 70, description: "API development" },
+      { name: "Java Spring Boot", level: 72, description: "Enterprise backend services" },
     ],
   },
   {
-    title: "Tools & DevOps",
+    title: "Database & ORM",
     skills: [
-      { name: "Git", level: 92, description: "Advanced workflows, CI/CD" },
-      { name: "Webpack/Vite", level: 85, description: "Custom configs, Optimization" },
-      { name: "Jest/Jasmine", level: 88, description: "Unit & Integration testing" },
-      { name: "Docker", level: 75, description: "Containerization, Compose" },
+      { name: "MongoDB", level: 80, description: "Mongoose, Aggregation" },
+      { name: "MySQL", level: 78, description: "Complex queries, Optimization" },
+      { name: "PostgreSQL", level: 75, description: "Advanced queries" },
+      { name: "Oracle", level: 72, description: "Enterprise database" },
+      { name: "Firebase", level: 75, description: "Real-time database, Auth" },
     ],
   },
   {
-    title: "Architecture",
+    title: "Cloud & DevOps",
     skills: [
-      { name: "Micro-Frontends", level: 85, description: "Module Federation, Monorepos" },
-      { name: "Design Patterns", level: 90, description: "SOLID, DI, Observables" },
-      { name: "Performance", level: 92, description: "Lazy loading, Code splitting" },
-      { name: "Accessibility", level: 85, description: "WCAG 2.1, ARIA" },
+      { name: "AWS", level: 75, description: "Cloud services, S3, Lambda" },
+      { name: "Docker", level: 78, description: "Containerization, Compose" },
+      { name: "Kubernetes", level: 70, description: "Container orchestration" },
+      { name: "Jenkins", level: 75, description: "CI/CD Pipelines" },
+      { name: "Git", level: 92, description: "Advanced workflows, Bitbucket" },
+    ],
+  },
+  {
+    title: "Architecture & Patterns",
+    skills: [
+      { name: "MVC Pattern", level: 90, description: "Clean architecture" },
+      { name: "RESTful APIs", level: 92, description: "API design, Integration" },
+      { name: "Service Workers", level: 85, description: "Offline support, Caching" },
+      { name: "Web Workers", level: 82, description: "Background processing" },
+      { name: "Unit Testing", level: 88, description: "Jest, Jasmine" },
     ],
   },
 ];
@@ -110,56 +111,59 @@ export const skillCategories: SkillCategory[] = [
 export const experiences: Experience[] = [
   {
     id: "exp-1",
-    company: "TechCorp Global",
-    role: "Senior Angular Developer",
-    duration: "2022 - Present",
-    location: "Remote",
+    company: "Infosys Limited",
+    role: "Technology Analyst / Full-Stack Developer",
+    duration: "Dec 2022 - Present",
+    location: "Chennai, India",
     responsibilities: [
-      "Lead development of enterprise analytics dashboard serving 50K+ daily users",
-      "Architect modular component library used across 12+ applications",
-      "Mentor team of 5 junior developers on Angular best practices",
-      "Implement performance optimizations reducing load time by 60%",
+      "Lead UI revamp of product and service pages using Angular 12+",
+      "Develop secure Node.js middleware for handling customer data",
+      "Facilitate client demos and technical workshops",
+      "Architect dynamic Angular modules for real-time analytics",
     ],
     achievements: [
-      "Reduced bundle size by 45% through tree-shaking and lazy loading",
-      "Implemented real-time data streaming handling 10K+ events/second",
-      "Built custom CDK-based drag-drop system for dashboard widgets",
+      "Achieved 20% faster release cycle and boosted user engagement",
+      "Delivered 287 user stories within compressed timeline",
+      "Implemented role-based access control (RBAC) for banking compliance",
+      "Reduced operational downtime by 15% with offline-capable apps",
     ],
   },
   {
     id: "exp-2",
-    company: "FinTech Solutions",
-    role: "Full-Stack Developer",
-    duration: "2019 - 2022",
-    location: "Bangalore, India",
+    company: "ASZ Technologies Limited",
+    role: "Front-end Developer",
+    duration: "Dec 2021 - Dec 2022",
+    location: "Bengaluru, India",
     responsibilities: [
-      "Developed trading platform with Angular frontend and Node.js backend",
-      "Created real-time charting system using Highcharts and WebSockets",
-      "Implemented secure authentication with OAuth 2.0 and JWT",
-      "Built automated testing pipeline with 90%+ code coverage",
+      "Structure and implement responsive hotel check-in interfaces",
+      "Craft modular UI components with SCSS and TypeScript",
+      "Provide UI/UX consulting to align design with business goals",
+      "Architect real-time gaming analytics dashboards",
     ],
     achievements: [
-      "Platform processes $10M+ daily transactions",
-      "Reduced API response times by 70% through caching strategies",
-      "Won 'Best Technical Innovation' award for chart optimization",
+      "Reduced manual workload by 40% through automation",
+      "Achieved 30% boost in page load speed",
+      "Implemented mobile-first gaming analytics interface",
+      "Enabled seamless feature expansion through component architecture",
     ],
   },
   {
     id: "exp-3",
-    company: "Digital Agency Pro",
-    role: "Frontend Developer",
-    duration: "2017 - 2019",
+    company: "TVM InfoTech Private Limited",
+    role: "UI/Frontend Developer",
+    duration: "Dec 2019 - Nov 2021",
     location: "Chennai, India",
     responsibilities: [
-      "Built responsive web applications for diverse client portfolio",
-      "Migrated legacy jQuery apps to modern Angular architecture",
-      "Created reusable component libraries for rapid development",
-      "Collaborated with UX team to implement pixel-perfect designs",
+      "Craft device-agnostic UI elements using Angular and PrimeNG",
+      "Apply component-based architecture and route-level code splitting",
+      "Enable region-specific filtering and multilingual capabilities",
+      "Optimize client-side performance and DOM rendering",
     ],
     achievements: [
-      "Delivered 20+ successful client projects on schedule",
-      "Reduced development time by 40% through component reuse",
-      "Established coding standards adopted company-wide",
+      "Delivered TN Schools Government website for statewide use",
+      "Achieved 25% faster page load experience",
+      "Enhanced inclusivity for diverse user groups",
+      "Boosted scalability through modular architecture",
     ],
   },
 ];
@@ -167,46 +171,74 @@ export const experiences: Experience[] = [
 export const projects: Project[] = [
   {
     id: "proj-1",
-    title: "Enterprise Analytics Dashboard",
-    description: "Real-time analytics platform processing millions of data points with interactive visualizations and customizable widgets.",
-    techStack: ["Angular 17", "NgRx", "Highcharts", "WebSocket", "Node.js"],
+    title: "TalkTalk Broadband Website",
+    description: "End-to-end UI revamp of product and service pages with secure customer data handling and real-time updates for UK broadband provider.",
+    techStack: ["Angular 12", "Node.js", "TypeScript", "HTML5", "SASS", "Bootstrap", "MongoDB"],
+    role: "Lead UI Developer / MEAN Stack Developer",
     highlights: [
-      "50K+ daily active users",
-      "10K events/second processing",
-      "Sub-100ms chart updates",
+      "20% faster release cycle",
+      "Improved Lighthouse scores",
+      "Real-time customer interactions",
     ],
   },
   {
     id: "proj-2", 
-    title: "Trading Platform UI",
-    description: "High-frequency trading interface with real-time market data, order management, and advanced charting capabilities.",
-    techStack: ["Angular 15", "RxJS", "D3.js", "WebSocket", "Redis"],
+    title: "Wabtec – Railway Department Management",
+    description: "Cross-platform desktop applications for railway department management in Canada with offline access and real-time monitoring capabilities.",
+    techStack: ["Angular", "TypeScript", "ElectronJS", "Service Worker", "Node.js", "Oracle"],
+    role: "Full-Stack Developer",
     highlights: [
-      "$10M+ daily volume",
-      "99.99% uptime",
-      "< 50ms latency",
+      "287 user stories delivered",
+      "15% reduced downtime",
+      "Offline-capable app",
     ],
   },
   {
     id: "proj-3",
-    title: "Healthcare Management System",
-    description: "HIPAA-compliant patient management system with appointment scheduling, medical records, and telemedicine integration.",
-    techStack: ["Angular 16", "NgRx", "Node.js", "PostgreSQL", "WebRTC"],
+    title: "BOFA – Search Analytics Platform",
+    description: "Real-time search analytics platform for Bank of America enabling investigators to filter and visualize complex datasets with millisecond response times.",
+    techStack: ["Angular 14", "Webix", "WebixJet", "TypeScript", "Oracle", "Java Spring Boot"],
+    role: "Senior Angular Developer",
     highlights: [
-      "100K+ patient records",
-      "HIPAA compliant",
-      "99.9% availability",
+      "Millisecond response times",
+      "RBAC compliance",
+      "Fraud detection workflows",
     ],
   },
   {
     id: "proj-4",
-    title: "E-Commerce Admin Portal",
-    description: "Comprehensive admin dashboard for multi-vendor marketplace with inventory management, analytics, and order processing.",
-    techStack: ["Angular 14", "Angular Material", "Charts.js", "Firebase"],
+    title: "Web Check-in Hotel System",
+    description: "Responsive hotel check-in interface automating guest onboarding with optimized frontend rendering and API performance for US hotels.",
+    techStack: ["Angular 13", "TypeScript", "HTML5", "SCSS", "Bootstrap"],
+    role: "UI Consultant",
     highlights: [
-      "5000+ daily orders",
-      "Real-time inventory",
-      "Multi-language support",
+      "40% reduced manual work",
+      "30% faster page load",
+      "High conversion rates",
+    ],
+  },
+  {
+    id: "proj-5",
+    title: "Byte Brew – Gaming Analytics Dashboard",
+    description: "Real-time analytics interface monitoring player activity, match outcomes, and leaderboard dynamics for esports and mobile gaming platforms.",
+    techStack: ["Angular 14", "Bootstrap", "CSS3", "TypeScript"],
+    role: "UI Consultant",
+    highlights: [
+      "Live scoring system",
+      "Heatmap overlays",
+      "Mobile-first design",
+    ],
+  },
+  {
+    id: "proj-6",
+    title: "TN Schools – Government Website",
+    description: "Tamil Nadu Government Schools website with device-agnostic UI, region-specific filtering, and multilingual capabilities for statewide access.",
+    techStack: ["Angular 10", "TypeScript", "HTML5", "CSS3", "PrimeNg"],
+    role: "Angular Developer",
+    highlights: [
+      "Statewide deployment",
+      "Multilingual support",
+      "25% faster performance",
     ],
   },
 ];
@@ -242,4 +274,24 @@ export const architectureHighlights = [
     description: "NgRx store patterns, Signal-based state, optimistic updates, time-travel debugging",
     icon: "refresh",
   },
+];
+
+export const education = [
+  {
+    degree: "Post Graduate Diploma in Data Science and Engineering",
+    institution: "Great Lakes Institute of Management",
+    year: "2021",
+  },
+  {
+    degree: "Bachelor of Science (B.Sc.) in Computer Science",
+    institution: "Jamal Mohammed College",
+    year: "2018",
+  },
+];
+
+export const certifications = [
+  "MEAN Stack Full Stack Master Professional - Simplilearn",
+  "Mastery in Figma UI/UX - Guvi",
+  "Graphics Design and Adobe Technologies",
+  "AWS Cloud Practitioner (In Progress)",
 ];

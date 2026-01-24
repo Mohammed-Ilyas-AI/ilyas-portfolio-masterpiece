@@ -129,10 +129,13 @@ const HeroSection = () => {
           <Button
             variant="outline"
             size="lg"
+            asChild
             className="group border-border/50 bg-card/30 backdrop-blur-sm hover:bg-card/50 px-8 py-6 text-lg rounded-xl transition-all duration-300"
           >
-            <Download className="mr-2 w-5 h-5 group-hover:-translate-y-0.5 transition-transform" />
-            Download Resume
+            <a href={profileData.resumeUrl} download>
+              <Download className="mr-2 w-5 h-5 group-hover:-translate-y-0.5 transition-transform" />
+              Download Resume
+            </a>
           </Button>
         </motion.div>
 
