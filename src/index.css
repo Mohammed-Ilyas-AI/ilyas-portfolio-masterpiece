@@ -6,7 +6,7 @@
 
 @layer base {
   :root {
-    /* Dark theme - Primary */
+    /* Dark theme - Primary (default) */
     --background: 222 47% 6%;
     --foreground: 210 40% 96%;
 
@@ -63,6 +63,60 @@
     --sidebar-border: 222 30% 18%;
     --sidebar-ring: 186 100% 50%;
   }
+
+  /* Light theme */
+  .light {
+    --background: 0 0% 98%;
+    --foreground: 222 47% 11%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+
+    /* Cyan-Teal Primary - slightly darker for light mode */
+    --primary: 186 85% 40%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Warm Gold Accent */
+    --accent: 38 95% 50%;
+    --accent-foreground: 0 0% 100%;
+
+    --secondary: 220 14% 96%;
+    --secondary-foreground: 222 47% 11%;
+
+    --muted: 220 14% 92%;
+    --muted-foreground: 220 8% 46%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 13% 88%;
+    --input: 220 13% 88%;
+    --ring: 186 85% 40%;
+
+    /* Custom tokens - light mode */
+    --gradient-primary: linear-gradient(135deg, hsl(186 85% 40%), hsl(170 70% 35%));
+    --gradient-accent: linear-gradient(135deg, hsl(38 95% 50%), hsl(25 95% 45%));
+    --gradient-hero: linear-gradient(135deg, hsl(0 0% 98%) 0%, hsl(220 14% 96%) 50%, hsl(0 0% 98%) 100%);
+    --gradient-glass: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.7) 100%);
+    
+    --glow-primary: 0 0 40px hsl(186 85% 40% / 0.2);
+    --glow-accent: 0 0 40px hsl(38 95% 50% / 0.2);
+    
+    --shadow-glass: 0 8px 32px rgba(0, 0, 0, 0.08);
+    --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.06);
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 222 47% 11%;
+    --sidebar-primary: 186 85% 40%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 220 14% 96%;
+    --sidebar-accent-foreground: 222 47% 11%;
+    --sidebar-border: 220 13% 88%;
+    --sidebar-ring: 186 85% 40%;
+  }
 }
 
 @layer base {
@@ -72,6 +126,14 @@
 
   html {
     scroll-behavior: smooth;
+  }
+
+  /* Theme transition - smooth color changes */
+  html,
+  html *,
+  html *::before,
+  html *::after {
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease, fill 0.3s ease, stroke 0.3s ease, box-shadow 0.3s ease;
   }
 
   body {
@@ -84,8 +146,8 @@
   }
 
   ::selection {
-    background: hsl(186 100% 50% / 0.3);
-    color: hsl(210 40% 96%);
+    background: hsl(var(--primary) / 0.3);
+    color: hsl(var(--foreground));
   }
 
   ::-webkit-scrollbar {
@@ -93,16 +155,16 @@
   }
 
   ::-webkit-scrollbar-track {
-    background: hsl(222 47% 6%);
+    background: hsl(var(--background));
   }
 
   ::-webkit-scrollbar-thumb {
-    background: hsl(222 30% 20%);
+    background: hsl(var(--muted));
     border-radius: 4px;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: hsl(186 100% 50% / 0.5);
+    background: hsl(var(--primary) / 0.5);
   }
 }
 
