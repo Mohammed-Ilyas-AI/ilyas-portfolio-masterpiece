@@ -39,14 +39,10 @@ const HeroSection = () => {
   };
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden noise-overlay">
-      {/* Animated background */}
-      <div className="absolute inset-0 bg-hero-pattern" />
-      
-      {/* Gradient orbs */}
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden noise-overlay bg-background">
+      {/* Gradient orbs - using CSS variables for theme awareness */}
       <motion.div
-        className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full blur-3xl opacity-20"
-        style={{ background: "radial-gradient(circle, hsl(186 100% 50%), transparent)" }}
+        className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full blur-3xl opacity-20 bg-primary"
         animate={{
           scale: [1, 1.2, 1],
           opacity: [0.2, 0.3, 0.2],
@@ -54,8 +50,7 @@ const HeroSection = () => {
         transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
       />
       <motion.div
-        className="absolute bottom-1/4 right-1/4 w-80 h-80 rounded-full blur-3xl opacity-15"
-        style={{ background: "radial-gradient(circle, hsl(38 100% 60%), transparent)" }}
+        className="absolute bottom-1/4 right-1/4 w-80 h-80 rounded-full blur-3xl opacity-15 bg-accent"
         animate={{
           scale: [1.2, 1, 1.2],
           opacity: [0.15, 0.25, 0.15],

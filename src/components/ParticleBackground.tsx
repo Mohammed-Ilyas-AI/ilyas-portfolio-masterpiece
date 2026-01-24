@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface Particle {
   x: number;
@@ -14,6 +14,24 @@ const ParticleBackground = () => {
   const particlesRef = useRef<Particle[]>([]);
   const mouseRef = useRef({ x: 0, y: 0 });
   const animationRef = useRef<number>();
+  const [isDark, setIsDark] = useState(true);
+
+  // Listen for theme changes
+  useEffect(() => {
+    const checkTheme = () => {
+      setIsDark(document.documentElement.classList.contains("dark"));
+    };
+    
+    checkTheme();
+    
+    const observer = new MutationObserver(checkTheme);
+    observer.observe(document.documentElement, { 
+      attributes: true, 
+      attributeFilter: ["class"] 
+    });
+    
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -43,6 +61,11 @@ const ParticleBackground = () => {
       }
     };
 
+    // Theme-aware colors
+    const particleColor = isDark 
+      ? { h: 186, s: 100, l: 50 }  // Cyan for dark mode
+      : { h: 186, s: 85, l: 35 };  // Darker cyan for light mode
+
     const drawParticles = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -57,10 +80,11 @@ const ParticleBackground = () => {
         if (particle.y < 0) particle.y = canvas.height;
         if (particle.y > canvas.height) particle.y = 0;
 
-        // Draw particle
+        // Draw particle with theme-aware opacity
+        const baseOpacity = isDark ? particle.opacity : particle.opacity * 0.6;
         ctx.beginPath();
         ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
-        ctx.fillStyle = `hsla(186, 100%, 50%, ${particle.opacity})`;
+        ctx.fillStyle = `hsla(${particleColor.h}, ${particleColor.s}%, ${particleColor.l}%, ${baseOpacity})`;
         ctx.fill();
 
         // Draw connections to nearby particles
@@ -70,10 +94,13 @@ const ParticleBackground = () => {
           const distance = Math.sqrt(dx * dx + dy * dy);
 
           if (distance < 120) {
+            const lineOpacity = isDark 
+              ? 0.15 * (1 - distance / 120)
+              : 0.1 * (1 - distance / 120);
             ctx.beginPath();
             ctx.moveTo(particle.x, particle.y);
             ctx.lineTo(otherParticle.x, otherParticle.y);
-            ctx.strokeStyle = `hsla(186, 100%, 50%, ${0.15 * (1 - distance / 120)})`;
+            ctx.strokeStyle = `hsla(${particleColor.h}, ${particleColor.s}%, ${particleColor.l}%, ${lineOpacity})`;
             ctx.lineWidth = 0.5;
             ctx.stroke();
           }
@@ -119,7 +146,7 @@ const ParticleBackground = () => {
       window.removeEventListener("resize", resizeCanvas);
       window.removeEventListener("mousemove", handleMouseMove);
     };
-  }, []);
+  }, [isDark]);
 
   return (
     <canvas
