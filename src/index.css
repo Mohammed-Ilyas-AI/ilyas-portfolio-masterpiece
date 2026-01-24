@@ -236,7 +236,7 @@
 
   .timeline-line {
     @apply absolute left-0 md:left-1/2 transform md:-translate-x-1/2 w-0.5 h-full;
-    background: linear-gradient(to bottom, transparent, hsl(186 100% 50%), hsl(38 100% 60%), transparent);
+    background: linear-gradient(to bottom, transparent, hsl(var(--primary)), hsl(var(--accent)), transparent);
   }
 }
 
