@@ -85,14 +85,15 @@ const AboutSection = () => {
             <h3 className="font-display text-xl font-semibold mb-6 text-center">Core Expertise</h3>
             <div className="flex flex-wrap justify-center gap-3">
               {[
-                "Angular v6 → v19",
+                "Angular v6 → v18+",
                 "Enterprise Applications",
                 "Performance Optimization",
-                "Clean Architecture",
-                "Real-time Dashboards",
+                "SEO & Core Web Vitals",
+                "PWA & Service Workers",
                 "Team Leadership",
                 "Full-Stack Development",
                 "UI/UX Implementation",
+                "Domain: Telecom, Finance, Gaming, Education",
               ].map((expertise, index) => (
                 <motion.span
                   key={expertise}

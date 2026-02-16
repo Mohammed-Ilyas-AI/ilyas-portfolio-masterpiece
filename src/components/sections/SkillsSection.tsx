@@ -109,15 +109,17 @@ const SkillsSection = () => {
                 "Highcharts",
                 "D3.js",
                 "PWA",
-                "Service Workers",
+                "SSR / SSG",
                 "IndexedDB",
-                "Web Workers",
                 "GraphQL",
                 "REST APIs",
                 "Cypress",
                 "Storybook",
                 "Nx Monorepo",
                 "Azure DevOps",
+                "Route Guards",
+                "Lazy Loading",
+                "Code Splitting",
               ].map((skill, index) => (
                 <motion.span
                   key={skill}
