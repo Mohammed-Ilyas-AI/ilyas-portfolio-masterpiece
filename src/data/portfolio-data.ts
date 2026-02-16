@@ -203,6 +203,7 @@ export const projects: Project[] = [
       "Improved Lighthouse scores",
       "Real-time customer interactions",
     ],
+    link: "https://www.talktalk.co.uk/",
   },
   {
     id: "proj-2", 
@@ -215,6 +216,7 @@ export const projects: Project[] = [
       "15% reduced downtime",
       "Offline-capable app",
     ],
+    link: "https://www.wabteccorp.com/",
   },
   {
     id: "proj-3",
@@ -227,6 +229,7 @@ export const projects: Project[] = [
       "RBAC compliance",
       "Fraud detection workflows",
     ],
+    link: "https://www.bankofamerica.com/",
   },
   {
     id: "proj-4",
@@ -239,6 +242,7 @@ export const projects: Project[] = [
       "30% faster page load",
       "High conversion rates",
     ],
+    link: "https://www.marriott.com/",
   },
   {
     id: "proj-5",
@@ -251,6 +255,7 @@ export const projects: Project[] = [
       "Heatmap overlays",
       "Mobile-first design",
     ],
+    link: "https://www.bytebrew.io/",
   },
   {
     id: "proj-6",
@@ -263,6 +268,7 @@ export const projects: Project[] = [
       "Multilingual support",
       "25% faster performance",
     ],
+    link: "https://tnschools.gov.in/welcome",
   },
 ];
 
