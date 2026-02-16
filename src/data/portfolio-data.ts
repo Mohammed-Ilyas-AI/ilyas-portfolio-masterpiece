@@ -51,27 +51,31 @@ export const profileData = {
     "MEAN Stack Expert",
   ],
   
-  about: `Seasoned Full-Stack Developer with over 7+ years of experience architecting and delivering scalable web applications using the MEAN Stack, with deep specialization in Angular (6+ years). Adept at building responsive, high-performance interfaces and robust backend services across diverse domains including finance, e-commerce, and enterprise platforms. Recognized for precision in UI/UX animation, theme toggling, and seamless user interaction design. Proven ability to lead cross-functional teams, drive technical strategy, and ensure delivery excellence through clean architecture, optimized code, and agile collaboration.`,
+  about: `Senior Frontend & Full-Stack Engineer with 7+ years of experience building scalable, high-performance web applications across telecom, finance, and enterprise domains. Specialized in Angular and MEAN stack architecture, with strong expertise in performance optimization, SEO best practices, Progressive Web Applications (PWA), and Service Workers. Proven track record of leading UI modernization initiatives, improving Lighthouse scores, accelerating release cycles, and delivering responsive, cross-platform experiences.
+
+Skilled in designing clean, modular architectures and collaborating closely with product, UX, and backend teams to translate complex business requirements into intuitive, production-ready solutions. Passionate about building fast, maintainable, and user-centric digital platforms that balance engineering excellence with business impact.`,
 };
 
 export const skillCategories: SkillCategory[] = [
   {
     title: "Frontend",
     skills: [
-      { name: "Angular 6-18+", level: 98, description: "Standalone Components, Signals, RxJS" },
+      { name: "Angular 6–18+", level: 98, description: "Standalone Components, Signals, RxJS, SSR" },
       { name: "TypeScript", level: 95, description: "Advanced types, Generics, Decorators" },
+      { name: "JavaScript (ES6+)", level: 95, description: "Modern JS, async/await, modules" },
       { name: "RxJS", level: 92, description: "Reactive patterns, Custom operators" },
-      { name: "SASS/CSS3", level: 90, description: "Animations, Bootstrap, Tailwind CSS" },
-      { name: "HTML5", level: 95, description: "Semantic markup, Accessibility" },
-      { name: "PrimeNg", level: 88, description: "Component library, Theming" },
-      { name: "Angular Material", level: 90, description: "Material Design components" },
+      { name: "HTML5 / CSS3 / SASS", level: 94, description: "Semantic markup, Animations, Accessibility" },
+      { name: "Tailwind CSS / Bootstrap", level: 90, description: "Utility-first & component frameworks" },
+      { name: "PrimeNG / Angular Material", level: 88, description: "Enterprise UI component libraries" },
+      { name: "Vue.js / Nuxt.js", level: 45, description: "Foundational / Learning, SSR & SSG concepts" },
+      { name: "PWA & SEO", level: 85, description: "Meta tags, OpenGraph, Core Web Vitals, Lighthouse" },
     ],
   },
   {
     title: "Backend",
     skills: [
       { name: "Node.js", level: 85, description: "Express, REST APIs, Microservices" },
-      { name: "Express.js", level: 82, description: "Middleware, Authentication" },
+      { name: "Express.js", level: 82, description: "Middleware, Authentication, API Integration" },
       { name: "Python (Flask)", level: 70, description: "API development" },
       { name: "Java Spring Boot", level: 72, description: "Enterprise backend services" },
     ],
@@ -79,31 +83,50 @@ export const skillCategories: SkillCategory[] = [
   {
     title: "Database & ORM",
     skills: [
-      { name: "MongoDB", level: 80, description: "Mongoose, Aggregation" },
+      { name: "MongoDB", level: 80, description: "Mongoose ORM, Aggregation pipelines" },
       { name: "MySQL", level: 78, description: "Complex queries, Optimization" },
-      { name: "PostgreSQL", level: 75, description: "Advanced queries" },
-      { name: "Oracle", level: 72, description: "Enterprise database" },
+      { name: "PostgreSQL", level: 75, description: "Advanced queries, Indexing" },
       { name: "Firebase", level: 75, description: "Real-time database, Auth" },
+      { name: "Oracle", level: 72, description: "Enterprise database" },
+      { name: "Sequelize", level: 50, description: "Conceptual familiarity" },
     ],
   },
   {
     title: "Cloud & DevOps",
     skills: [
-      { name: "AWS", level: 75, description: "Cloud services, S3, Lambda" },
+      { name: "AWS (EC2, S3)", level: 72, description: "Cloud services, Deployment" },
       { name: "Docker", level: 78, description: "Containerization, Compose" },
       { name: "Kubernetes", level: 70, description: "Container orchestration" },
-      { name: "Jenkins", level: 75, description: "CI/CD Pipelines" },
-      { name: "Git", level: 92, description: "Advanced workflows, Bitbucket" },
+      { name: "Jenkins / CI/CD", level: 75, description: "Pipelines, Deployment Automation" },
+      { name: "Git / Bitbucket", level: 92, description: "Advanced workflows, Code reviews" },
+    ],
+  },
+  {
+    title: "Tools & Performance",
+    skills: [
+      { name: "Webpack / Vite", level: 85, description: "Build optimization, HMR" },
+      { name: "Lighthouse / PageSpeed", level: 88, description: "Performance auditing, Core Web Vitals" },
+      { name: "Postman", level: 85, description: "API testing, Collections, Automation" },
+      { name: "Jira / VS Code", level: 90, description: "Project management, IDE productivity" },
+      { name: "Webix / WebixJet", level: 80, description: "Data-rich UI widgets" },
+    ],
+  },
+  {
+    title: "Testing",
+    skills: [
+      { name: "Jest / Jasmine", level: 88, description: "Unit & Component Testing" },
+      { name: "Mocha", level: 60, description: "Familiarity, test runner" },
+      { name: "Cross-Browser Testing", level: 85, description: "Multi-platform compatibility" },
     ],
   },
   {
     title: "Architecture & Patterns",
     skills: [
-      { name: "MVC Pattern", level: 90, description: "Clean architecture" },
-      { name: "RESTful APIs", level: 92, description: "API design, Integration" },
-      { name: "Service Workers", level: 85, description: "Offline support, Caching" },
-      { name: "Web Workers", level: 82, description: "Background processing" },
-      { name: "Unit Testing", level: 88, description: "Jest, Jasmine" },
+      { name: "MVC / RESTful", level: 92, description: "Clean architecture, API design" },
+      { name: "SOLID Principles", level: 88, description: "Design patterns, maintainability" },
+      { name: "Service Workers", level: 85, description: "Offline support, Caching strategies" },
+      { name: "Web Workers", level: 82, description: "Background processing, 60fps UI" },
+      { name: "State Management", level: 88, description: "NgRx, Signals, Lazy Loading, Code Splitting" },
     ],
   },
 ];
