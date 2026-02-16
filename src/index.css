@@ -283,3 +283,27 @@
     transform: scale(1.05);
   }
 }
+
+/* Boot Loader Glitch Animations */
+@keyframes boot-glitch-1 {
+  0%, 100% { transform: translate(0); }
+  20% { transform: translate(-2px, 2px); }
+  40% { transform: translate(2px, -1px); }
+  60% { transform: translate(-1px, -2px); }
+  80% { transform: translate(1px, 1px); }
+}
+
+@keyframes boot-glitch-2 {
+  0%, 100% { transform: translate(0); }
+  25% { transform: translate(2px, -2px); }
+  50% { transform: translate(-2px, 1px); }
+  75% { transform: translate(1px, 2px); }
+}
+
+.animate-boot-glitch-1 {
+  animation: boot-glitch-1 0.3s ease-in-out 3;
+}
+
+.animate-boot-glitch-2 {
+  animation: boot-glitch-2 0.3s ease-in-out 3 0.05s;
+}
