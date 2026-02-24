@@ -4,22 +4,27 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const useGsapScrollAnimations = () => {
+/**
+ * Lightweight scroll animations for non-choreographed sections.
+ * Skips hero (Framer Motion) and choreographed sections (about, skills, experience, projects).
+ */
+const useGsapScrollAnimations = (enabled: boolean = true) => {
   useEffect(() => {
-    // Small delay to let DOM render
+    if (!enabled) return;
+
     const timer = setTimeout(() => {
-      // Skip the hero section (first section) — it uses Framer Motion
-      const sections = document.querySelectorAll("section:not(:first-of-type)");
+      // Only target sections NOT handled by the choreographer
+      const choreographedIds = new Set(["about", "skills", "experience", "projects"]);
+      const sections = document.querySelectorAll("section");
 
       sections.forEach((section) => {
-        // Section reveal - play on enter, don't reverse
+        // Skip hero (first section) and choreographed sections
+        if (section === sections[0]) return;
+        if (section.id && choreographedIds.has(section.id)) return;
+
         gsap.fromTo(
           section,
-          {
-            opacity: 0,
-            y: 50,
-            scale: 0.97,
-          },
+          { opacity: 0, y: 50, scale: 0.97 },
           {
             opacity: 1,
             y: 0,
@@ -29,21 +34,16 @@ const useGsapScrollAnimations = () => {
             scrollTrigger: {
               trigger: section,
               start: "top 90%",
-              end: "top 30%",
               toggleActions: "play none none none",
             },
           }
         );
 
-        // Stagger text elements inside each section
         const textEls = section.querySelectorAll("h2, h3, p, .glass-card");
         if (textEls.length > 0) {
           gsap.fromTo(
             textEls,
-            {
-              opacity: 0,
-              y: 30,
-            },
+            { opacity: 0, y: 30 },
             {
               opacity: 1,
               y: 0,
@@ -53,7 +53,6 @@ const useGsapScrollAnimations = () => {
               scrollTrigger: {
                 trigger: section,
                 start: "top 85%",
-                end: "top 30%",
                 toggleActions: "play none none none",
               },
             }
@@ -62,13 +61,13 @@ const useGsapScrollAnimations = () => {
       });
 
       ScrollTrigger.refresh();
-    }, 100);
+    }, 250);
 
     return () => {
       clearTimeout(timer);
       ScrollTrigger.getAll().forEach((t) => t.kill());
     };
-  }, []);
+  }, [enabled]);
 };
 
 export default useGsapScrollAnimations;

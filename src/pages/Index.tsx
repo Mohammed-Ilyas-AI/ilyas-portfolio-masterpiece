@@ -14,6 +14,8 @@ import CursorProximityLight from "@/components/CursorProximityLight";
 import BootLoader from "@/components/BootLoader";
 import useSmoothScroll from "@/hooks/useSmoothScroll";
 import useGsapScrollAnimations from "@/hooks/useGsapScrollAnimations";
+import useAnimationChoreographer from "@/hooks/useAnimationChoreographer";
+import usePerformanceGuardrail from "@/hooks/usePerformanceGuardrail";
 
 const Index = () => {
   const [showBoot, setShowBoot] = useState(() => {
@@ -21,21 +23,29 @@ const Index = () => {
     return true;
   });
 
+  const perf = usePerformanceGuardrail();
+
   const handleBootComplete = useCallback(() => {
     sessionStorage.setItem("portfolio_booted", "true");
     setShowBoot(false);
   }, []);
 
   useSmoothScroll();
-  useGsapScrollAnimations();
+  useGsapScrollAnimations(perf.enableScrollAnimations);
+  useAnimationChoreographer(perf.enableScrollAnimations);
 
   return (
     <>
       {showBoot && <BootLoader onComplete={handleBootComplete} />}
       <main className="min-h-screen bg-background text-foreground overflow-x-hidden">
-        <ParticleBackground />
-        <CursorProximityLight />
-        <CustomCursor />
+        {perf.enableParticles && (
+          <ParticleBackground
+            densityMultiplier={perf.particleDensity}
+            enableConnectionLines={perf.enableConnectionLines}
+          />
+        )}
+        {perf.enableCursorLight && <CursorProximityLight />}
+        {perf.enableHeavyEffects && <CustomCursor />}
         <Navbar />
         <HeroSection />
         <AboutSection />
