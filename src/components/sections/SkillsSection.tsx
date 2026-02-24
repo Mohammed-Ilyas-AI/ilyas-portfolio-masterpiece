@@ -71,7 +71,7 @@ const SkillCategory = ({
 
 const SkillsSection = () => {
   return (
-    <section id="skills" className="section-padding relative overflow-hidden">
+    <section id="skills" className="section-padding relative overflow-hidden" style={{ opacity: 1 }}>
       {/* Background accents */}
       <div className="absolute top-0 right-0 w-1/3 h-full bg-accent/5 blur-3xl" />
       <div className="absolute bottom-0 left-0 w-1/4 h-1/2 bg-primary/5 blur-3xl" />
