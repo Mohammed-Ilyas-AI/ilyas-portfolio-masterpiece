@@ -8,29 +8,29 @@ const useGsapScrollAnimations = () => {
   useEffect(() => {
     // Small delay to let DOM render
     const timer = setTimeout(() => {
-      // Animate all sections
-      const sections = document.querySelectorAll("section");
+      // Skip the hero section (first section) — it uses Framer Motion
+      const sections = document.querySelectorAll("section:not(:first-of-type)");
 
       sections.forEach((section) => {
-        // Section reveal
+        // Section reveal - play on enter, don't reverse
         gsap.fromTo(
           section,
           {
-            opacity: 0.3,
-            y: 40,
-            scale: 0.98,
+            opacity: 0,
+            y: 50,
+            scale: 0.97,
           },
           {
             opacity: 1,
             y: 0,
             scale: 1,
-            duration: 0.8,
+            duration: 1,
             ease: "power3.out",
             scrollTrigger: {
               trigger: section,
-              start: "top 85%",
-              end: "top 20%",
-              toggleActions: "play reverse play reverse",
+              start: "top 90%",
+              end: "top 30%",
+              toggleActions: "play none none none",
             },
           }
         );
@@ -42,19 +42,19 @@ const useGsapScrollAnimations = () => {
             textEls,
             {
               opacity: 0,
-              y: 25,
+              y: 30,
             },
             {
               opacity: 1,
               y: 0,
-              duration: 0.6,
-              stagger: 0.05,
+              duration: 0.7,
+              stagger: 0.08,
               ease: "power2.out",
               scrollTrigger: {
                 trigger: section,
-                start: "top 80%",
-                end: "top 20%",
-                toggleActions: "play reverse play reverse",
+                start: "top 85%",
+                end: "top 30%",
+                toggleActions: "play none none none",
               },
             }
           );

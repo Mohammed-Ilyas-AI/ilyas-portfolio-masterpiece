@@ -39,7 +39,7 @@ const HeroSection = () => {
   };
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden noise-overlay bg-background">
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden noise-overlay bg-background" style={{ opacity: 1 }}>
       {/* Gradient orbs - using CSS variables for theme awareness */}
       <motion.div
         className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full blur-3xl opacity-20 bg-primary"
