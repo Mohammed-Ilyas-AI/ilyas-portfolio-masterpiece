@@ -39,21 +39,21 @@ const HeroSection = () => {
   };
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden noise-overlay bg-background" style={{ opacity: 1 }}>
-      {/* Gradient orbs - using CSS variables for theme awareness */}
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden noise-overlay" style={{ opacity: 1 }}>
+      {/* Subtle gradient orbs — low opacity to let particles shine through */}
       <motion.div
-        className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full blur-3xl opacity-20 bg-primary"
+        className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full blur-3xl opacity-10 bg-primary"
         animate={{
           scale: [1, 1.2, 1],
-          opacity: [0.2, 0.3, 0.2],
+          opacity: [0.08, 0.15, 0.08],
         }}
         transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
       />
       <motion.div
-        className="absolute bottom-1/4 right-1/4 w-80 h-80 rounded-full blur-3xl opacity-15 bg-accent"
+        className="absolute bottom-1/4 right-1/4 w-80 h-80 rounded-full blur-3xl opacity-10 bg-accent"
         animate={{
           scale: [1.2, 1, 1.2],
-          opacity: [0.15, 0.25, 0.15],
+          opacity: [0.06, 0.12, 0.06],
         }}
         transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
       />
