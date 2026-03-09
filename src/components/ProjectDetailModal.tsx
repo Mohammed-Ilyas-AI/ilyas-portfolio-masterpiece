@@ -114,11 +114,11 @@ const ProjectDetailModal = ({ project, isOpen, onClose }: ProjectDetailModalProp
               {/* Close button */}
               <motion.button
                 onClick={onClose}
-                className="absolute top-4 right-4 p-2.5 rounded-full bg-background/40 backdrop-blur-sm text-foreground/70 hover:text-foreground hover:bg-background/70 transition-all"
+                className="absolute top-2 right-4 p-2 rounded-full bg-background/40 backdrop-blur-sm text-foreground/70 hover:text-foreground hover:bg-background/70 transition-all"
                 whileHover={{ scale: 1.1, rotate: 90 }}
                 whileTap={{ scale: 0.9 }}
               >
-                <X className="w-5 h-5" />
+                <X className="w-4 h-4" />
               </motion.button>
             </div>
 
