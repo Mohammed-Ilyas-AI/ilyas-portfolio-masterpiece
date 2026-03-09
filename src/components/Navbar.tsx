@@ -71,7 +71,7 @@ const Navbar = () => {
                 window.scrollTo({ top: 0, behavior: "smooth" });
               }}
               whileHover={{ scale: 1.05 }}
-              className="font-display text-2xl font-bold relative flex items-center"
+              className="font-display text-2xl font-bold relative flex items-center group"
             >
               {["M", "I", "B"].map((letter, i) => (
                 <motion.span
@@ -98,6 +98,8 @@ const Navbar = () => {
               >
                 _
               </motion.span>
+              {/* Glowing underline on hover */}
+              <span className="absolute -bottom-1 left-0 w-full h-[2px] bg-gradient-to-r from-primary via-accent to-primary bg-[length:200%_100%] scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left rounded-full shadow-[0_0_8px_hsl(var(--primary)/0.6),0_0_16px_hsl(var(--accent)/0.3)]" />
             </motion.a>
 
             {/* Desktop Navigation */}
