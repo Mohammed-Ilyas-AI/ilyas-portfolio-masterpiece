@@ -124,7 +124,7 @@ const ProjectDetailModal = ({ project, isOpen, onClose }: ProjectDetailModalProp
 
             {/* Content */}
             <motion.div
-              className="p-6 -mt-4"
+              className="p-5 -mt-2"
               variants={contentVariants}
               initial="hidden"
               animate="visible"

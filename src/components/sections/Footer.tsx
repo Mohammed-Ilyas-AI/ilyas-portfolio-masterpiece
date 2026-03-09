@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { profileData } from "@/data/portfolio-data";
-import { Heart, ArrowUp } from "lucide-react";
+import { ArrowUp } from "lucide-react";
 
 const Footer = () => {
   const scrollToTop = () => {
