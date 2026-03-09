@@ -88,8 +88,8 @@ const ProjectDetailModal = ({ project, isOpen, onClose }: ProjectDetailModalProp
             className="relative w-full max-w-2xl max-h-[85vh] overflow-y-auto rounded-2xl border border-border/50 bg-card/95 backdrop-blur-xl shadow-2xl"
             style={{ transformStyle: "preserve-3d" }}
           >
-            {/* Animated header gradient */}
-            <div className="relative h-32 overflow-hidden">
+            {/* Compact header */}
+            <div className="relative h-14 overflow-hidden">
               <motion.div
                 className="absolute inset-0"
                 style={{
@@ -103,7 +103,7 @@ const ProjectDetailModal = ({ project, isOpen, onClose }: ProjectDetailModalProp
               />
               {/* Floating number */}
               <motion.div
-                className="absolute top-4 left-6 font-display text-6xl font-bold text-foreground/5"
+                className="absolute top-2 left-6 font-display text-3xl font-bold text-foreground/5"
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.3 }}
