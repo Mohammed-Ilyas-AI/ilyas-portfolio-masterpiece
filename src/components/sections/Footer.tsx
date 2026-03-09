@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { profileData } from "@/data/portfolio-data";
-import { Heart, ArrowUp } from "lucide-react";
+import { ArrowUp } from "lucide-react";
 
 const Footer = () => {
   const scrollToTop = () => {
@@ -29,17 +29,21 @@ const Footer = () => {
             </p>
           </motion.div>
 
-          {/* Copyright */}
+          {/* Tagline */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="flex items-center gap-2 text-sm text-muted-foreground"
+            className="flex items-center gap-2 text-sm text-muted-foreground font-mono"
           >
-            <span>© {new Date().getFullYear()} Built with</span>
-            <Heart className="w-4 h-4 text-destructive fill-destructive animate-pulse" />
-            <span>and lots of code</span>
+            <span className="text-primary">{'>'}</span>
+            <motion.span
+              animate={{ opacity: [1, 0.4, 1] }}
+              transition={{ duration: 2, repeat: Infinity }}
+            >
+              Engineered with precision. Powered by curiosity.
+            </motion.span>
           </motion.div>
 
           {/* Scroll to top */}

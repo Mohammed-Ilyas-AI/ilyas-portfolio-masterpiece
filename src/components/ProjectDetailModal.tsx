@@ -88,8 +88,8 @@ const ProjectDetailModal = ({ project, isOpen, onClose }: ProjectDetailModalProp
             className="relative w-full max-w-2xl max-h-[85vh] overflow-y-auto rounded-2xl border border-border/50 bg-card/95 backdrop-blur-xl shadow-2xl"
             style={{ transformStyle: "preserve-3d" }}
           >
-            {/* Animated header gradient */}
-            <div className="relative h-32 overflow-hidden">
+            {/* Compact header */}
+            <div className="relative h-14 overflow-hidden">
               <motion.div
                 className="absolute inset-0"
                 style={{
@@ -103,7 +103,7 @@ const ProjectDetailModal = ({ project, isOpen, onClose }: ProjectDetailModalProp
               />
               {/* Floating number */}
               <motion.div
-                className="absolute top-4 left-6 font-display text-6xl font-bold text-foreground/5"
+                className="absolute top-2 left-6 font-display text-3xl font-bold text-foreground/5"
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.3 }}
@@ -114,17 +114,17 @@ const ProjectDetailModal = ({ project, isOpen, onClose }: ProjectDetailModalProp
               {/* Close button */}
               <motion.button
                 onClick={onClose}
-                className="absolute top-4 right-4 p-2.5 rounded-full bg-background/40 backdrop-blur-sm text-foreground/70 hover:text-foreground hover:bg-background/70 transition-all"
+                className="absolute top-2 right-4 p-2 rounded-full bg-background/40 backdrop-blur-sm text-foreground/70 hover:text-foreground hover:bg-background/70 transition-all"
                 whileHover={{ scale: 1.1, rotate: 90 }}
                 whileTap={{ scale: 0.9 }}
               >
-                <X className="w-5 h-5" />
+                <X className="w-4 h-4" />
               </motion.button>
             </div>
 
             {/* Content */}
             <motion.div
-              className="p-6 -mt-4"
+              className="p-5 -mt-2"
               variants={contentVariants}
               initial="hidden"
               animate="visible"

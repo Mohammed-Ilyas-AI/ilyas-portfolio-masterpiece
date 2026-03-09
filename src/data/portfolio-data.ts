@@ -36,7 +36,7 @@ export interface Experience {
 
 export const profileData = {
   name: "Mohammed Ilyas B",
-  role: "Technology Analyst / Angular Developer",
+  role: "Web Developer · AI-Powered Engineer",
   tagline: "Building high-performance, enterprise-grade web applications",
   email: "Ilyas.fa007@gmail.com",
   phone: "+91 7397751255",

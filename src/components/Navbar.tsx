@@ -71,10 +71,33 @@ const Navbar = () => {
                 window.scrollTo({ top: 0, behavior: "smooth" });
               }}
               whileHover={{ scale: 1.05 }}
-              className="font-display text-xl font-bold gradient-text"
+              className="font-display text-2xl font-bold relative flex items-center"
             >
-              {profileData.name.split(" ")[0]}
-              <span className="text-accent">.</span>
+              {["M", "I", "B"].map((letter, i) => (
+                <motion.span
+                  key={letter}
+                  className="gradient-text inline-block"
+                  animate={{
+                    y: [0, -3, 0],
+                    opacity: [0.7, 1, 0.7],
+                  }}
+                  transition={{
+                    duration: 2,
+                    repeat: Infinity,
+                    delay: i * 0.2,
+                    ease: "easeInOut",
+                  }}
+                >
+                  {letter}
+                </motion.span>
+              ))}
+              <motion.span
+                className="text-accent ml-0.5"
+                animate={{ opacity: [0, 1, 0] }}
+                transition={{ duration: 1.5, repeat: Infinity }}
+              >
+                _
+              </motion.span>
             </motion.a>
 
             {/* Desktop Navigation */}
