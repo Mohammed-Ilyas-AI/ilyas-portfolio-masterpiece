@@ -86,13 +86,15 @@ const AboutSection = () => {
             <div className="flex flex-wrap justify-center gap-3">
               {[
                 "Angular v6 → v18+",
-                "Enterprise Applications",
-                "Performance Optimization",
-                "SEO & Core Web Vitals",
+                "AI-Augmented Development",
+                "Interaction Engineering",
+                "Performance & Core Web Vitals",
+                "API Design & Contracts",
                 "PWA & Service Workers",
-                "Team Leadership",
-                "Full-Stack Development",
-                "UI/UX Implementation",
+                "Full-Stack Architecture",
+                "UX Correctness & Accessibility",
+                "Enterprise-Scale Systems",
+                "Prompt Engineering",
                 "Domain: Telecom, Finance, Gaming, Education",
               ].map((expertise, index) => (
                 <motion.span

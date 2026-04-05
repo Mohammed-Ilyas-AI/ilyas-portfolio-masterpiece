@@ -117,7 +117,11 @@ const SkillsSection = () => {
                 "Storybook",
                 "Nx Monorepo",
                 "Azure DevOps",
-                "Route Guards",
+                "GitHub Copilot",
+                "ChatGPT / LLMs",
+                "Cursor AI",
+                "Prompt Engineering",
+                "AI Test Generation",
                 "Lazy Loading",
                 "Code Splitting",
               ].map((skill, index) => (
