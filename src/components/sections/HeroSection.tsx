@@ -1,15 +1,14 @@
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { profileData } from "@/data/portfolio-data";
 import { ChevronDown, Download, ArrowRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import MagneticButton from "@/components/MagneticButton";
 
 const HeroSection = () => {
   const [currentRoleIndex, setCurrentRoleIndex] = useState(0);
   const [displayText, setDisplayText] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
 
-  // Typewriter effect for role switching
   useEffect(() => {
     const currentRole = profileData.roles[currentRoleIndex];
     const typingSpeed = isDeleting ? 50 : 100;
@@ -40,26 +39,18 @@ const HeroSection = () => {
 
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden noise-overlay" style={{ opacity: 1 }}>
-      {/* Subtle gradient orbs — low opacity to let particles shine through */}
       <motion.div
         className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full blur-3xl opacity-10 bg-primary"
-        animate={{
-          scale: [1, 1.2, 1],
-          opacity: [0.08, 0.15, 0.08],
-        }}
+        animate={{ scale: [1, 1.2, 1], opacity: [0.05, 0.1, 0.05] }}
         transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
       />
       <motion.div
         className="absolute bottom-1/4 right-1/4 w-80 h-80 rounded-full blur-3xl opacity-10 bg-accent"
-        animate={{
-          scale: [1.2, 1, 1.2],
-          opacity: [0.06, 0.12, 0.06],
-        }}
+        animate={{ scale: [1.2, 1, 1.2], opacity: [0.04, 0.1, 0.04] }}
         transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
       />
 
       <div className="relative z-10 section-container text-center">
-        {/* Greeting */}
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -69,7 +60,6 @@ const HeroSection = () => {
           Hello, I'm
         </motion.p>
 
-        {/* Name with gradient */}
         <motion.h1
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -79,7 +69,6 @@ const HeroSection = () => {
           <span className="gradient-text animate-gradient">{profileData.name}</span>
         </motion.h1>
 
-        {/* Animated role */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -96,7 +85,6 @@ const HeroSection = () => {
           </span>
         </motion.div>
 
-        {/* Tagline */}
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -106,35 +94,26 @@ const HeroSection = () => {
           {profileData.tagline}
         </motion.p>
 
-        {/* CTA Buttons */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 1 }}
           className="flex flex-col sm:flex-row gap-4 justify-center items-center"
         >
-          <Button
-            size="lg"
-            onClick={scrollToProjects}
-            className="group bg-gradient-to-r from-primary to-[hsl(170,80%,45%)] text-primary-foreground font-semibold px-8 py-6 text-lg rounded-xl hover:shadow-lg hover:shadow-primary/25 transition-all duration-300"
-          >
-            View Projects
-            <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-          </Button>
-          <Button
-            variant="outline"
-            size="lg"
-            asChild
-            className="group border-border/50 bg-card/30 backdrop-blur-sm hover:bg-card/50 px-8 py-6 text-lg rounded-xl transition-all duration-300"
-          >
-            <a href={profileData.resumeUrl} download>
+          <MagneticButton onClick={scrollToProjects} strength={0.3}>
+            <span className="group inline-flex items-center bg-gradient-to-r from-primary to-[hsl(170,80%,45%)] text-primary-foreground font-semibold px-8 py-4 text-lg rounded-xl hover:shadow-lg hover:shadow-primary/25 transition-all duration-300 cursor-pointer">
+              View Projects
+              <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            </span>
+          </MagneticButton>
+          <MagneticButton as="a" href={profileData.resumeUrl} download strength={0.3}>
+            <span className="group inline-flex items-center border border-border/50 bg-card/30 backdrop-blur-sm hover:bg-card/50 px-8 py-4 text-lg rounded-xl transition-all duration-300 cursor-pointer font-medium">
               <Download className="mr-2 w-5 h-5 group-hover:-translate-y-0.5 transition-transform" />
               Download Resume
-            </a>
-          </Button>
+            </span>
+          </MagneticButton>
         </motion.div>
 
-        {/* Scroll indicator */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -152,7 +131,6 @@ const HeroSection = () => {
         </motion.div>
       </div>
 
-      {/* Decorative elements */}
       <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background to-transparent" />
     </section>
   );
