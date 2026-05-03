@@ -1,230 +1,188 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { X, ExternalLink, Zap, User, Layers, Globe } from "lucide-react";
+import {
+  X,
+  ExternalLink,
+  Layers,
+  Globe,
+  Target,
+  Wrench,
+  AlertTriangle,
+  GitBranch,
+  TrendingUp,
+  User,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
-import type { Project } from "@/data/portfolio-data";
+import type { CaseStudy } from "@/data/portfolio-data";
 
-interface ProjectDetailModalProps {
-  project: Project | null;
+interface Props {
+  project: CaseStudy | null;
   isOpen: boolean;
   onClose: () => void;
 }
 
-const backdropVariants = {
+const backdrop = {
   hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { duration: 0.3 } },
-  exit: { opacity: 0, transition: { duration: 0.25, delay: 0.1 } },
+  visible: { opacity: 1, transition: { duration: 0.25 } },
+  exit: { opacity: 0, transition: { duration: 0.2 } },
 };
 
-const modalVariants = {
-  hidden: { opacity: 0, scale: 0.8, y: 60, rotateX: 8 },
+const modal = {
+  hidden: { opacity: 0, scale: 0.92, y: 40 },
   visible: {
     opacity: 1,
     scale: 1,
     y: 0,
-    rotateX: 0,
-    transition: {
-      type: "spring" as const,
-      stiffness: 260,
-      damping: 22,
-      mass: 0.8,
-    },
+    transition: { type: "spring" as const, stiffness: 240, damping: 24 },
   },
-  exit: {
-    opacity: 0,
-    scale: 0.85,
-    y: 40,
-    transition: { duration: 0.25, ease: "easeIn" as const },
-  },
+  exit: { opacity: 0, scale: 0.95, y: 30, transition: { duration: 0.2 } },
 };
 
-const contentVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.06,
-      delayChildren: 0.2,
-    },
-  },
-};
+const Block = ({
+  icon: Icon,
+  title,
+  children,
+  accent = "primary",
+}: {
+  icon: typeof Target;
+  title: string;
+  children: React.ReactNode;
+  accent?: "primary" | "accent";
+}) => (
+  <section className="mb-5">
+    <div className="flex items-center gap-2 mb-2">
+      <Icon className={`w-4 h-4 ${accent === "primary" ? "text-primary" : "text-accent"}`} />
+      <h3 className="font-display font-semibold text-xs uppercase tracking-[0.18em] text-foreground/80">
+        {title}
+      </h3>
+    </div>
+    <div className="text-sm text-foreground/85 leading-relaxed">{children}</div>
+  </section>
+);
 
-const itemVariants = {
-  hidden: { opacity: 0, y: 16, filter: "blur(4px)" },
-  visible: {
-    opacity: 1,
-    y: 0,
-    filter: "blur(0px)",
-    transition: { duration: 0.4, ease: "easeOut" as const },
-  },
-};
+const BulletList = ({ items, dotClass = "bg-primary" }: { items: string[]; dotClass?: string }) => (
+  <ul className="space-y-2">
+    {items.map((item, i) => (
+      <li key={i} className="flex gap-2.5 items-start">
+        <span className={`mt-1.5 w-1.5 h-1.5 rounded-full flex-shrink-0 ${dotClass}`} />
+        <span>{item}</span>
+      </li>
+    ))}
+  </ul>
+);
 
-
-
-const ProjectDetailModal = ({ project, isOpen, onClose }: ProjectDetailModalProps) => {
+const ProjectDetailModal = ({ project, isOpen, onClose }: Props) => {
   if (!project) return null;
 
   return (
     <AnimatePresence mode="wait">
       {isOpen && (
         <motion.div
-          className="fixed inset-0 z-[100] flex items-center justify-center p-4 perspective-1000"
-          variants={backdropVariants}
+          className="fixed inset-0 z-[100] flex items-center justify-center p-3 md:p-6"
+          variants={backdrop}
           initial="hidden"
           animate="visible"
           exit="exit"
         >
-          {/* Backdrop */}
           <motion.div
-            className="absolute inset-0 bg-background/70 backdrop-blur-md"
+            className="absolute inset-0 bg-background/75 backdrop-blur-md"
             onClick={onClose}
           />
 
-          {/* Modal */}
           <motion.div
-            variants={modalVariants}
+            variants={modal}
             initial="hidden"
             animate="visible"
             exit="exit"
-            className="relative w-full max-w-2xl max-h-[85vh] overflow-y-auto rounded-2xl border border-border/50 bg-card/95 backdrop-blur-xl shadow-2xl"
-            style={{ transformStyle: "preserve-3d" }}
+            className="relative w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-2xl border border-border/50 bg-card/95 backdrop-blur-xl shadow-2xl"
           >
-            {/* Compact header */}
-            <div className="relative h-14 overflow-hidden">
-              <motion.div
-                className="absolute inset-0"
-                style={{
-                  backgroundSize: "200% 200%",
-                  background: `linear-gradient(135deg, hsl(var(--primary) / 0.3) 0%, hsl(var(--accent) / 0.2) 50%, hsl(var(--primary) / 0.1) 100%)`,
-                }}
-                animate={{
-                  backgroundPosition: ["0% 0%", "100% 100%", "0% 0%"],
-                }}
-                transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-              />
-              {/* Floating number */}
-              <motion.div
-                className="absolute top-2 left-6 font-display text-3xl font-bold text-foreground/5"
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.3 }}
-              >
-                {project.id.replace("proj-", "0")}
-              </motion.div>
+            {/* Sticky compact header */}
+            <div className="sticky top-0 z-10 backdrop-blur-xl bg-card/80 border-b border-border/40">
+              <div className="flex items-start justify-between px-5 py-3 gap-3">
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2 text-[11px] uppercase tracking-wider text-muted-foreground mb-1">
+                    <span className="font-mono text-primary/80">
+                      {project.id.replace("proj-", "Case 0")}
+                    </span>
+                    <span>·</span>
+                    <span>{project.client}</span>
+                  </div>
+                  <h2 className="font-display text-lg md:text-xl font-bold leading-tight truncate">
+                    {project.title}
+                  </h2>
+                  {project.role && (
+                    <div className="flex items-center gap-1.5 text-xs text-primary mt-0.5">
+                      <User className="w-3 h-3" />
+                      <span>{project.role}</span>
+                    </div>
+                  )}
+                </div>
 
-              {/* Close button */}
-              <motion.button
-                onClick={onClose}
-                className="absolute top-2 right-4 p-2 rounded-full bg-background/40 backdrop-blur-sm text-foreground/70 hover:text-foreground hover:bg-background/70 transition-all"
-                whileHover={{ scale: 1.1, rotate: 90 }}
-                whileTap={{ scale: 0.9 }}
-              >
-                <X className="w-4 h-4" />
-              </motion.button>
+                <button
+                  onClick={onClose}
+                  className="flex-shrink-0 p-2 rounded-full bg-background/40 hover:bg-background/70 text-foreground/70 hover:text-foreground transition"
+                  aria-label="Close"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
             </div>
 
-            {/* Content */}
-            <motion.div
-              className="p-5 -mt-2"
-              variants={contentVariants}
-              initial="hidden"
-              animate="visible"
-            >
-              {/* Title */}
-              <motion.h2
-                variants={itemVariants}
-                className="font-display text-2xl md:text-3xl font-bold mb-2"
-              >
-                {project.title}
-              </motion.h2>
-
-              {/* Role */}
-              {project.role && (
-                <motion.div
-                  variants={itemVariants}
-                  className="flex items-center gap-2 text-primary mb-4"
-                >
-                  <User className="w-4 h-4" />
-                  <span className="text-sm font-medium">{project.role}</span>
-                </motion.div>
-              )}
-
-              {/* Description */}
-              <motion.p
-                variants={itemVariants}
-                className="text-muted-foreground leading-relaxed mb-6"
-              >
+            <div className="p-5 md:p-6">
+              <p className="text-foreground/85 leading-relaxed mb-6">
                 {project.description}
-              </motion.p>
+              </p>
 
-              {/* Tech Stack */}
-              <motion.div variants={itemVariants} className="mb-6">
-                <div className="flex items-center gap-2 mb-3">
-                  <Layers className="w-4 h-4 text-primary" />
-                  <h3 className="font-display font-semibold text-sm uppercase tracking-wider">
-                    Tech Stack
-                  </h3>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {project.techStack.map((tech, i) => (
-                    <motion.span
-                      key={tech}
-                      initial={{ opacity: 0, scale: 0.7 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{
-                        delay: 0.35 + i * 0.04,
-                        type: "spring",
-                        stiffness: 300,
-                      }}
-                      className="px-3 py-1.5 text-xs font-medium rounded-lg bg-primary/10 text-primary border border-primary/20"
+              <Block icon={Target} title="Context / Problem">
+                <p>{project.context}</p>
+              </Block>
+
+              <Block icon={Wrench} title="Solution Design" accent="accent">
+                <p>{project.solution}</p>
+              </Block>
+
+              <Block icon={GitBranch} title="Architecture">
+                <BulletList items={project.architecture} />
+              </Block>
+
+              <Block icon={AlertTriangle} title="Challenges" accent="accent">
+                <BulletList items={project.challenges} dotClass="bg-accent" />
+              </Block>
+
+              <Block icon={GitBranch} title="Engineering Decisions">
+                <BulletList items={project.decisions} />
+              </Block>
+
+              <Block icon={Layers} title="Tech Stack">
+                <div className="flex flex-wrap gap-2 mt-1">
+                  {project.techStack.map((t) => (
+                    <span
+                      key={t}
+                      className="px-2.5 py-1 text-xs font-medium rounded-md bg-primary/10 text-primary border border-primary/20"
                     >
-                      {tech}
-                    </motion.span>
+                      {t}
+                    </span>
                   ))}
                 </div>
-              </motion.div>
+              </Block>
 
-              {/* Highlights */}
-              <motion.div variants={itemVariants} className="mb-8">
-                <div className="flex items-center gap-2 mb-3">
-                  <Zap className="w-4 h-4 text-accent" />
-                  <h3 className="font-display font-semibold text-sm uppercase tracking-wider">
-                    Key Highlights
-                  </h3>
-                </div>
-                <div className="grid gap-2">
-                  {project.highlights.map((highlight, i) => (
-                    <motion.div
-                      key={i}
-                      initial={{ opacity: 0, x: -15 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.45 + i * 0.08 }}
-                      whileHover={{ x: 4 }}
-                      className="flex items-center gap-3 p-3 rounded-lg bg-muted/30 border border-border/30 hover:border-primary/30 transition-colors"
-                    >
-                      <div className="w-1.5 h-1.5 rounded-full bg-accent flex-shrink-0" />
-                      <span className="text-sm text-foreground/80">{highlight}</span>
-                    </motion.div>
-                  ))}
-                </div>
-              </motion.div>
+              <Block icon={TrendingUp} title="Impact" accent="accent">
+                <BulletList items={project.impact} dotClass="bg-accent" />
+              </Block>
 
-              {/* Live Link */}
               {project.link && (
-                <motion.div variants={itemVariants}>
-                  <Button
-                    size="lg"
-                    asChild
-                    className="w-full group bg-gradient-to-r from-primary to-[hsl(170,80%,45%)] text-primary-foreground font-semibold rounded-xl hover:shadow-lg hover:shadow-primary/25 transition-all duration-300"
-                  >
-                    <a href={project.link} target="_blank" rel="noopener noreferrer">
-                      <Globe className="w-5 h-5 mr-2 group-hover:rotate-12 transition-transform" />
-                      Visit Live Website
-                      <ExternalLink className="w-4 h-4 ml-2 opacity-60" />
-                    </a>
-                  </Button>
-                </motion.div>
+                <Button
+                  size="lg"
+                  asChild
+                  className="w-full mt-2 group bg-gradient-to-r from-primary to-[hsl(170,80%,45%)] text-primary-foreground font-semibold rounded-xl hover:shadow-lg hover:shadow-primary/25 transition"
+                >
+                  <a href={project.link} target="_blank" rel="noopener noreferrer">
+                    <Globe className="w-5 h-5 mr-2 group-hover:rotate-12 transition-transform" />
+                    Visit Live Site
+                    <ExternalLink className="w-4 h-4 ml-2 opacity-60" />
+                  </a>
+                </Button>
               )}
-            </motion.div>
+            </div>
           </motion.div>
         </motion.div>
       )}

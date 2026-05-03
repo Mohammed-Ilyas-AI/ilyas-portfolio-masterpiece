@@ -1,183 +1,140 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, Suspense } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Canvas, useFrame } from "@react-three/fiber";
+import { Float, MeshDistortMaterial, Sparkles } from "@react-three/drei";
+import * as THREE from "three";
 
 const BOOT_LINES = [
-  "Initializing Portfolio…",
-  "Loading Modules…",
-  "Rendering Experience…",
+  "Booting engineering shell…",
+  "Loading capabilities · 7 yrs production…",
+  "Mounting case studies…",
+  "Calibrating AI workflows…",
 ];
 
-const NeuralGrid = () => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+/* ---------- 3D scene ---------- */
 
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
+const RotatingCore = ({ phase }: { phase: number }) => {
+  const meshRef = useRef<THREE.Mesh>(null);
+  const ringRef1 = useRef<THREE.Mesh>(null);
+  const ringRef2 = useRef<THREE.Mesh>(null);
+  const ringRef3 = useRef<THREE.Mesh>(null);
 
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-
-    const nodes: { x: number; y: number; vx: number; vy: number }[] = [];
-    const count = 60;
-    for (let i = 0; i < count; i++) {
-      nodes.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        vx: (Math.random() - 0.5) * 0.4,
-        vy: (Math.random() - 0.5) * 0.4,
-      });
+  useFrame((state, delta) => {
+    if (meshRef.current) {
+      meshRef.current.rotation.x += delta * 0.3;
+      meshRef.current.rotation.y += delta * 0.4;
+      const s = phase >= 3 ? 1.6 : 1 + Math.sin(state.clock.elapsedTime * 1.5) * 0.06;
+      meshRef.current.scale.setScalar(s);
     }
+    if (ringRef1.current) ringRef1.current.rotation.z += delta * 0.6;
+    if (ringRef2.current) ringRef2.current.rotation.x += delta * 0.5;
+    if (ringRef3.current) ringRef3.current.rotation.y -= delta * 0.4;
+  });
 
-    let raf: number;
-    const draw = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      nodes.forEach((n) => {
-        n.x += n.vx;
-        n.y += n.vy;
-        if (n.x < 0 || n.x > canvas.width) n.vx *= -1;
-        if (n.y < 0 || n.y > canvas.height) n.vy *= -1;
-
-        ctx.beginPath();
-        ctx.arc(n.x, n.y, 1.5, 0, Math.PI * 2);
-        ctx.fillStyle = "hsla(186, 100%, 50%, 0.3)";
-        ctx.fill();
-      });
-
-      for (let i = 0; i < nodes.length; i++) {
-        for (let j = i + 1; j < nodes.length; j++) {
-          const dx = nodes[i].x - nodes[j].x;
-          const dy = nodes[i].y - nodes[j].y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 150) {
-            ctx.beginPath();
-            ctx.moveTo(nodes[i].x, nodes[i].y);
-            ctx.lineTo(nodes[j].x, nodes[j].y);
-            ctx.strokeStyle = `hsla(186, 100%, 50%, ${0.08 * (1 - dist / 150)})`;
-            ctx.lineWidth = 0.5;
-            ctx.stroke();
-          }
-        }
-      }
-      raf = requestAnimationFrame(draw);
-    };
-    draw();
-    return () => cancelAnimationFrame(raf);
-  }, []);
-
-  return <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />;
-};
-
-const GlitchText = ({ text }: { text: string }) => {
   return (
-    <div className="relative inline-block">
-      <motion.span
-        className="font-display text-4xl md:text-6xl lg:text-7xl font-bold text-foreground relative inline-block"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.1 }}
-      >
-        {/* Glitch layers */}
-        <span
-          className="absolute inset-0 text-primary/80 animate-boot-glitch-1"
-          style={{ clipPath: "inset(20% 0 30% 0)" }}
-          aria-hidden
-        >
-          {text}
-        </span>
-        <span
-          className="absolute inset-0 text-accent/60 animate-boot-glitch-2"
-          style={{ clipPath: "inset(60% 0 10% 0)" }}
-          aria-hidden
-        >
-          {text}
-        </span>
-        {text}
-      </motion.span>
-    </div>
+    <group>
+      <Float speed={2} rotationIntensity={0.4} floatIntensity={0.6}>
+        <mesh ref={meshRef}>
+          <icosahedronGeometry args={[1.1, 4]} />
+          <MeshDistortMaterial
+            color="#22d3ee"
+            emissive="#0891b2"
+            emissiveIntensity={0.6}
+            distort={0.45}
+            speed={2.5}
+            roughness={0.2}
+            metalness={0.85}
+          />
+        </mesh>
+      </Float>
+
+      {/* Orbital rings */}
+      <mesh ref={ringRef1} rotation={[Math.PI / 2, 0, 0]}>
+        <torusGeometry args={[1.8, 0.012, 16, 120]} />
+        <meshBasicMaterial color="#22d3ee" transparent opacity={0.55} />
+      </mesh>
+      <mesh ref={ringRef2} rotation={[0, 0, Math.PI / 4]}>
+        <torusGeometry args={[2.1, 0.008, 16, 120]} />
+        <meshBasicMaterial color="#fbbf24" transparent opacity={0.4} />
+      </mesh>
+      <mesh ref={ringRef3} rotation={[Math.PI / 3, Math.PI / 5, 0]}>
+        <torusGeometry args={[2.45, 0.006, 16, 120]} />
+        <meshBasicMaterial color="#22d3ee" transparent opacity={0.3} />
+      </mesh>
+
+      <Sparkles count={120} scale={6} size={2.4} speed={0.6} color="#22d3ee" />
+      <Sparkles count={60} scale={5} size={1.8} speed={0.4} color="#fbbf24" />
+
+      <ambientLight intensity={0.5} />
+      <pointLight position={[3, 3, 3]} intensity={1.5} color="#22d3ee" />
+      <pointLight position={[-3, -2, 2]} intensity={1} color="#fbbf24" />
+    </group>
   );
 };
+
+/* ---------- Boot loader ---------- */
 
 const BootLoader = ({ onComplete }: { onComplete: () => void }) => {
   const [phase, setPhase] = useState(0); // 0=typing, 1=name, 2=subtitle, 3=glow, 4=exit
   const [lineIndex, setLineIndex] = useState(0);
   const [charIndex, setCharIndex] = useState(0);
   const [displayedLines, setDisplayedLines] = useState<string[]>([]);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  // Play boot sound
+  // boot sound
   useEffect(() => {
-    // Create a subtle boot sound using Web Audio API
     try {
-      const audioCtx = new AudioContext();
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      const osc2 = audioCtx.createOscillator();
-      const gain2 = audioCtx.createGain();
-
+      const ctx = new AudioContext();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
       osc.type = "sine";
-      osc.frequency.setValueAtTime(440, audioCtx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.3);
-      gain.gain.setValueAtTime(0.03, audioCtx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.5);
-
-      osc2.type = "sine";
-      osc2.frequency.setValueAtTime(660, audioCtx.currentTime + 0.15);
-      osc2.frequency.exponentialRampToValueAtTime(1320, audioCtx.currentTime + 0.45);
-      gain2.gain.setValueAtTime(0, audioCtx.currentTime);
-      gain2.gain.setValueAtTime(0.02, audioCtx.currentTime + 0.15);
-      gain2.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.5);
-
-      osc.connect(gain).connect(audioCtx.destination);
-      osc2.connect(gain2).connect(audioCtx.destination);
+      osc.frequency.setValueAtTime(440, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.3);
+      gain.gain.setValueAtTime(0.025, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
+      osc.connect(gain).connect(ctx.destination);
       osc.start();
-      osc2.start();
-      osc.stop(audioCtx.currentTime + 0.5);
-      osc2.stop(audioCtx.currentTime + 0.5);
+      osc.stop(ctx.currentTime + 0.5);
     } catch {
-      // Silent fail if audio blocked
+      /* ignore */
     }
   }, []);
 
-  // Typing effect for system lines
+  // typing
   useEffect(() => {
     if (phase !== 0) return;
     if (lineIndex >= BOOT_LINES.length) {
       setPhase(1);
       return;
     }
-
-    const currentLine = BOOT_LINES[lineIndex];
-    if (charIndex < currentLine.length) {
-      const timer = setTimeout(() => setCharIndex((c) => c + 1), 25);
-      return () => clearTimeout(timer);
-    } else {
-      const timer = setTimeout(() => {
-        setDisplayedLines((prev) => [...prev, currentLine]);
-        setLineIndex((l) => l + 1);
-        setCharIndex(0);
-      }, 150);
-      return () => clearTimeout(timer);
+    const cur = BOOT_LINES[lineIndex];
+    if (charIndex < cur.length) {
+      const t = setTimeout(() => setCharIndex((c) => c + 1), 18);
+      return () => clearTimeout(t);
     }
+    const t = setTimeout(() => {
+      setDisplayedLines((p) => [...p, cur]);
+      setLineIndex((l) => l + 1);
+      setCharIndex(0);
+    }, 120);
+    return () => clearTimeout(t);
   }, [phase, lineIndex, charIndex]);
 
-  // Phase progression
+  // phase progression
   useEffect(() => {
     if (phase === 1) {
-      const t = setTimeout(() => setPhase(2), 600);
+      const t = setTimeout(() => setPhase(2), 700);
       return () => clearTimeout(t);
     }
     if (phase === 2) {
-      const t = setTimeout(() => setPhase(3), 500);
+      const t = setTimeout(() => setPhase(3), 600);
       return () => clearTimeout(t);
     }
     if (phase === 3) {
-      const t = setTimeout(() => setPhase(4), 400);
+      const t = setTimeout(() => setPhase(4), 500);
       return () => clearTimeout(t);
     }
     if (phase === 4) {
-      const t = setTimeout(onComplete, 500);
+      const t = setTimeout(onComplete, 600);
       return () => clearTimeout(t);
     }
   }, [phase, onComplete]);
@@ -187,40 +144,48 @@ const BootLoader = ({ onComplete }: { onComplete: () => void }) => {
       {phase < 4 && (
         <motion.div
           className="fixed inset-0 z-[10000] bg-background flex flex-col items-center justify-center overflow-hidden"
-          exit={{
-            opacity: 0,
-            scale: 1.1,
-            filter: "blur(20px)",
-          }}
-          transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+          exit={{ opacity: 0, scale: 1.05, filter: "blur(20px)" }}
+          transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
         >
-          {/* Neural grid background */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: phase >= 1 ? 0.15 : 0 }}
-            transition={{ duration: 0.8 }}
-            className="absolute inset-0"
-          >
-            <NeuralGrid />
-          </motion.div>
+          {/* 3D Canvas */}
+          <div className="absolute inset-0">
+            <Canvas
+              camera={{ position: [0, 0, 5], fov: 50 }}
+              gl={{ antialias: true, alpha: true }}
+              dpr={[1, 1.75]}
+            >
+              <Suspense fallback={null}>
+                <RotatingCore phase={phase} />
+              </Suspense>
+            </Canvas>
+          </div>
 
-          {/* System text - top left */}
-          <div className="absolute top-8 left-8 font-mono text-xs text-primary/60 space-y-1">
+          {/* Subtle vignette */}
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background:
+                "radial-gradient(circle at center, transparent 0%, hsl(var(--background)/0.6) 75%, hsl(var(--background)) 100%)",
+            }}
+          />
+
+          {/* System log top-left */}
+          <div className="absolute top-6 left-6 font-mono text-[11px] text-primary/70 space-y-1 max-w-[80vw] z-10">
             {displayedLines.map((line, i) => (
               <motion.div
                 key={i}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 0.6 }}
+                initial={{ opacity: 0, x: -8 }}
+                animate={{ opacity: 0.75, x: 0 }}
                 className="flex items-center gap-2"
               >
-                <span className="text-accent/60">▸</span>
+                <span className="text-accent/70">▸</span>
                 <span>{line}</span>
                 <span className="text-accent">✓</span>
               </motion.div>
             ))}
             {phase === 0 && lineIndex < BOOT_LINES.length && (
               <div className="flex items-center gap-2">
-                <span className="text-accent/60">▸</span>
+                <span className="text-accent/70">▸</span>
                 <span>
                   {BOOT_LINES[lineIndex].slice(0, charIndex)}
                   <span className="animate-blink text-primary">█</span>
@@ -229,67 +194,49 @@ const BootLoader = ({ onComplete }: { onComplete: () => void }) => {
             )}
           </div>
 
-          {/* Center content */}
-          <div className="relative z-10 text-center">
-            {/* Name with glitch */}
+          {/* Center text */}
+          <div className="relative z-10 text-center pointer-events-none px-4">
             <AnimatePresence>
               {phase >= 1 && (
                 <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
+                  initial={{ opacity: 0, y: 20, filter: "blur(10px)" }}
+                  animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                  transition={{ duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
                 >
-                  <GlitchText text="MOHAMMED ILYAS B" />
+                  <h1 className="font-display text-3xl md:text-5xl lg:text-6xl font-bold tracking-tight">
+                    <span className="gradient-text">MOHAMMED ILYAS B</span>
+                  </h1>
                 </motion.div>
               )}
             </AnimatePresence>
 
-            {/* Subtitle */}
             <AnimatePresence>
               {phase >= 2 && (
                 <motion.p
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5 }}
-                  className="mt-4 text-lg md:text-xl text-muted-foreground font-display tracking-wider"
+                  className="mt-3 text-sm md:text-base text-muted-foreground font-mono tracking-[0.25em] uppercase"
                 >
-                  Architecting Scalable Intelligence
+                  Full-Stack Engineer · AI-Augmented
                 </motion.p>
               )}
             </AnimatePresence>
-
-            {/* Glow pulse */}
-            {phase >= 3 && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: [0, 0.6, 0], scale: [0.8, 1.5, 2] }}
-                transition={{ duration: 0.8 }}
-                className="absolute inset-0 -z-10 mx-auto rounded-full"
-                style={{
-                  background: "radial-gradient(circle, hsl(var(--primary) / 0.3) 0%, transparent 70%)",
-                  width: "400px",
-                  height: "400px",
-                  left: "50%",
-                  top: "50%",
-                  transform: "translate(-50%, -50%)",
-                }}
-              />
-            )}
           </div>
 
-          {/* Bottom progress bar */}
-          <div className="absolute bottom-8 left-8 right-8">
+          {/* Bottom progress */}
+          <div className="absolute bottom-6 left-6 right-6 z-10">
             <div className="h-px bg-border/30 rounded-full overflow-hidden">
               <motion.div
-                className="h-full bg-gradient-to-r from-primary to-accent"
+                className="h-full bg-gradient-to-r from-primary via-accent to-primary"
                 initial={{ width: "0%" }}
                 animate={{ width: "100%" }}
-                transition={{ duration: 2.8, ease: "linear" }}
+                transition={{ duration: 2.6, ease: "linear" }}
               />
             </div>
-            <div className="flex justify-between mt-2 font-mono text-[10px] text-muted-foreground/40">
-              <span>SYS.BOOT v2.026</span>
-              <span>PORTFOLIO.RENDER</span>
+            <div className="flex justify-between mt-2 font-mono text-[10px] text-muted-foreground/50">
+              <span>SYS.BOOT v2026.05</span>
+              <span>RENDER · ENGINE READY</span>
             </div>
           </div>
         </motion.div>
