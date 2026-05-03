@@ -5,12 +5,13 @@ import { Menu, X } from "lucide-react";
 import ThemeToggle from "./ThemeToggle";
 
 const navItems = [
-  { label: "About", href: "#about" },
-  { label: "Skills", href: "#skills" },
+  { label: "Value", href: "#value" },
+  { label: "Trust", href: "#trust" },
+  { label: "Case Studies", href: "#projects" },
+  { label: "Mindset", href: "#mindset" },
+  { label: "Capabilities", href: "#capabilities" },
   { label: "Experience", href: "#experience" },
-  { label: "Projects", href: "#projects" },
-  { label: "Architecture", href: "#architecture" },
-  { label: "Contact", href: "#contact" },
+  { label: "Hire Me", href: "#cta" },
 ];
 
 const Navbar = () => {
