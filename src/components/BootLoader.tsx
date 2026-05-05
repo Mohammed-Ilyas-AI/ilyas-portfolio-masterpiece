@@ -210,6 +210,8 @@ const Scene = ({ phase, tier }: { phase: number; tier: string }) => {
           <Bloom intensity={0.9} luminanceThreshold={0.25} luminanceSmoothing={0.2} mipmapBlur />
           <ChromaticAberration
             offset={new THREE.Vector2(phase >= 3 ? 0.0025 : 0.0009, phase >= 3 ? 0.0025 : 0.0009) as any}
+            radialModulation={false}
+            modulationOffset={0}
             blendFunction={BlendFunction.NORMAL}
           />
           <Vignette eskil={false} offset={0.2} darkness={0.65} />
