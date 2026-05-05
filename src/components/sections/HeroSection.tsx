@@ -51,6 +51,7 @@ const HeroSection = () => {
       />
 
       <div className="relative z-10 section-container text-center">
+        <ParallaxLayer speed={-30}>
         {/* Status pill */}
         <motion.div
           initial={{ opacity: 0, y: 12 }}
