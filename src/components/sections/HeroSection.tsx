@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { profileData } from "@/data/portfolio-data";
 import { ChevronDown, Download, ArrowRight, MapPin } from "lucide-react";
 import MagneticButton from "@/components/MagneticButton";
+import ParallaxLayer from "@/lib/motion/ParallaxLayer";
 
 const HeroSection = () => {
   const [currentRoleIndex, setCurrentRoleIndex] = useState(0);
