@@ -5,6 +5,8 @@ import { AnimatedSection } from "@/lib/animations";
 import { ExternalLink, Github, Zap, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ProjectDetailModal from "@/components/ProjectDetailModal";
+import TiltCard from "@/lib/motion/TiltCard";
+import ZoomSection from "@/lib/motion/ZoomSection";
 
 // Extract unique tech categories for filter
 const allTechs = Array.from(
@@ -28,9 +30,10 @@ const ProjectCard = ({
       exit={{ opacity: 0, y: -20, scale: 0.95 }}
       transition={{ duration: 0.5, delay: index * 0.08 }}
       whileHover={{ y: -8 }}
-      className="group glass-card rounded-2xl overflow-hidden cursor-pointer relative"
+      className="group cursor-pointer relative"
       onClick={() => onOpen(project)}
     >
+    <TiltCard className="glass-card rounded-2xl overflow-hidden block" max={5}>
       {/* Animated card header */}
       <div className="h-36 relative overflow-hidden">
         <motion.div
@@ -131,6 +134,7 @@ const ProjectCard = ({
           )}
         </div>
       </div>
+    </TiltCard>
     </motion.div>
   );
 };
@@ -145,7 +149,7 @@ const ProjectsSection = () => {
       : projects.filter((p) => p.techStack.includes(activeFilter));
 
   return (
-    <section id="projects" className="section-padding relative overflow-hidden">
+    <ZoomSection id="projects" className="section-padding relative overflow-hidden block">
       <div className="absolute top-1/4 left-0 w-1/2 h-1/2 bg-primary/5 blur-3xl" />
       <div className="absolute bottom-0 right-0 w-1/3 h-1/2 bg-accent/5 blur-3xl" />
 
@@ -225,7 +229,7 @@ const ProjectsSection = () => {
         isOpen={!!selectedProject}
         onClose={() => setSelectedProject(null)}
       />
-    </section>
+    </ZoomSection>
   );
 };
 
