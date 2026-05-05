@@ -126,9 +126,10 @@ const HeroSection = () => {
             </span>
           ))}
         </motion.div>
+        </ParallaxLayer>
 
+        <ParallaxLayer speed={-60}>
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 1 }}
           className="flex flex-col sm:flex-row gap-4 justify-center items-center"
@@ -162,6 +163,7 @@ const HeroSection = () => {
           <MapPin className="w-3.5 h-3.5" />
           Trusted by enterprise teams across UK · USA · Canada · India
         </motion.p>
+        </ParallaxLayer>
 
         <motion.div
           initial={{ opacity: 0 }}
