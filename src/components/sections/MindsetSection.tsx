@@ -1,6 +1,8 @@
 import { motion } from "framer-motion";
 import { engineeringMindset } from "@/data/portfolio-data";
 import { AnimatedSection } from "@/lib/animations";
+import ScrollReveal from "@/lib/motion/ScrollReveal";
+import ScrollScrubText from "@/lib/motion/ScrollScrubText";
 
 const MindsetSection = () => {
   return (
