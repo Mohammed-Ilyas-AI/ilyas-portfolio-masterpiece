@@ -1,33 +1,36 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 
 interface PerformanceProfile {
-  /** Whether heavy effects should be enabled */
   enableHeavyEffects: boolean;
-  /** Whether particles should render */
   enableParticles: boolean;
-  /** Whether cursor light should render */
   enableCursorLight: boolean;
-  /** Max particle count multiplier (0-1) */
   particleDensity: number;
-  /** Whether GSAP scroll animations should run */
   enableScrollAnimations: boolean;
-  /** Whether connection lines in particles should render */
   enableConnectionLines: boolean;
-  /** Whether to use reduced motion */
   prefersReducedMotion: boolean;
+  /** Multi-layer parallax (Hero) */
+  enableParallax: boolean;
+  /** 3D card tilt + spotlight */
+  enableTilt: boolean;
+  /** Section zoom/blur transitions */
+  enableZoom: boolean;
+  /** Scroll-scrubbed text reveals */
+  enableScrub: boolean;
+  /** Full 3D r3f boot loader (vs CSS fallback) */
+  enable3DBoot: boolean;
+  /** Tier label for downstream tweaks */
+  tier: "high" | "mid" | "low" | "reduced";
 }
 
 const usePerformanceGuardrail = (): PerformanceProfile => {
   const [profile, setProfile] = useState<PerformanceProfile>(() => getProfile());
 
   useEffect(() => {
-    // Re-evaluate on resize (debounced)
     let timeout: ReturnType<typeof setTimeout>;
     const handleResize = () => {
       clearTimeout(timeout);
       timeout = setTimeout(() => setProfile(getProfile()), 300);
     };
-
     window.addEventListener("resize", handleResize);
     return () => {
       window.removeEventListener("resize", handleResize);
@@ -45,7 +48,6 @@ function getProfile(): PerformanceProfile {
   const isSmall = width < 768;
   const isMedium = width >= 768 && width < 1024;
 
-  // Check device memory (if available)
   const nav = navigator as any;
   const lowMemory = nav.deviceMemory !== undefined && nav.deviceMemory < 4;
   const lowCores = nav.hardwareConcurrency !== undefined && nav.hardwareConcurrency <= 2;
@@ -60,6 +62,12 @@ function getProfile(): PerformanceProfile {
       enableScrollAnimations: false,
       enableConnectionLines: false,
       prefersReducedMotion: true,
+      enableParallax: false,
+      enableTilt: false,
+      enableZoom: false,
+      enableScrub: false,
+      enable3DBoot: false,
+      tier: "reduced",
     };
   }
 
@@ -72,6 +80,12 @@ function getProfile(): PerformanceProfile {
       enableScrollAnimations: true,
       enableConnectionLines: false,
       prefersReducedMotion: false,
+      enableParallax: false,
+      enableTilt: false,
+      enableZoom: false,
+      enableScrub: false,
+      enable3DBoot: false,
+      tier: "low",
     };
   }
 
@@ -84,10 +98,15 @@ function getProfile(): PerformanceProfile {
       enableScrollAnimations: true,
       enableConnectionLines: false,
       prefersReducedMotion: false,
+      enableParallax: true,
+      enableTilt: !isTouch,
+      enableZoom: true,
+      enableScrub: false,
+      enable3DBoot: true,
+      tier: "mid",
     };
   }
 
-  // Desktop / high-end
   return {
     enableHeavyEffects: true,
     enableParticles: true,
@@ -96,6 +115,12 @@ function getProfile(): PerformanceProfile {
     enableScrollAnimations: true,
     enableConnectionLines: true,
     prefersReducedMotion: false,
+    enableParallax: true,
+    enableTilt: !isTouch,
+    enableZoom: true,
+    enableScrub: true,
+    enable3DBoot: true,
+    tier: "high",
   };
 }
 

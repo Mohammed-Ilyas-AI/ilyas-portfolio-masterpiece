@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { profileData } from "@/data/portfolio-data";
 import { ChevronDown, Download, ArrowRight, MapPin } from "lucide-react";
 import MagneticButton from "@/components/MagneticButton";
+import ParallaxLayer from "@/lib/motion/ParallaxLayer";
 
 const HeroSection = () => {
   const [currentRoleIndex, setCurrentRoleIndex] = useState(0);
@@ -50,6 +51,7 @@ const HeroSection = () => {
       />
 
       <div className="relative z-10 section-container text-center">
+        <ParallaxLayer speed={-30}>
         {/* Status pill */}
         <motion.div
           initial={{ opacity: 0, y: 12 }}
@@ -124,9 +126,10 @@ const HeroSection = () => {
             </span>
           ))}
         </motion.div>
+        </ParallaxLayer>
 
+        <ParallaxLayer speed={-60}>
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 1 }}
           className="flex flex-col sm:flex-row gap-4 justify-center items-center"
@@ -160,6 +163,7 @@ const HeroSection = () => {
           <MapPin className="w-3.5 h-3.5" />
           Trusted by enterprise teams across UK · USA · Canada · India
         </motion.p>
+        </ParallaxLayer>
 
         <motion.div
           initial={{ opacity: 0 }}
