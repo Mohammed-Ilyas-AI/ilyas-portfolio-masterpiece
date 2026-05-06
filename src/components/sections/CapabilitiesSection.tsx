@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import AmbientDepth from "@/lib/motion/AmbientDepth";
 import { capabilities } from "@/data/portfolio-data";
 import { AnimatedSection } from "@/lib/animations";
 import { Layers, Server, Bug, Sparkles, Network, Check, type LucideIcon } from "lucide-react";
@@ -14,6 +15,7 @@ const iconMap: Record<string, LucideIcon> = {
 const CapabilitiesSection = () => {
   return (
     <section id="capabilities" className="section-padding relative overflow-hidden">
+      <AmbientDepth variant="mixed" intensity={0.6} />
       <div className="absolute top-0 left-0 w-1/2 h-1/2 bg-primary/5 blur-3xl" />
       <div className="absolute bottom-0 right-0 w-1/3 h-1/2 bg-accent/5 blur-3xl" />
       <div className="section-container relative z-10">

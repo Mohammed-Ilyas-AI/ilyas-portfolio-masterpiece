@@ -9,52 +9,220 @@ import {
   Vignette,
 } from "@react-three/postprocessing";
 import { BlendFunction } from "postprocessing";
+import gsap from "gsap";
 import usePerformanceGuardrail from "@/hooks/usePerformanceGuardrail";
 
-const BOOT_LINES = [
-  "init://engineering-shell",
-  "load://7-years.production",
-  "mount://case-studies",
-  "calibrate://ai-workflows",
-  "ready://launch",
-];
-
 /* ============================================================
-   ACT 1 — Starfield (instanced points warp + ignite)
+   Sample target positions from text rendered on offscreen canvas
+   Returns N points distributed across the glyph fills, plus
+   per-point "letter index" so we can reveal letter-by-letter.
 ============================================================ */
-const Starfield = ({ count = 800, phase }: { count?: number; phase: number }) => {
-  const ref = useRef<THREE.Points>(null);
-  const positions = useMemo(() => {
-    const arr = new Float32Array(count * 3);
-    for (let i = 0; i < count; i++) {
-      const r = 4 + Math.random() * 14;
-      const theta = Math.random() * Math.PI * 2;
-      const phi = Math.acos(2 * Math.random() - 1);
-      arr[i * 3] = r * Math.sin(phi) * Math.cos(theta);
-      arr[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
-      arr[i * 3 + 2] = r * Math.cos(phi) - 4;
-    }
-    return arr;
-  }, [count]);
+function sampleTextTargets(
+  text: string,
+  count: number
+): { positions: Float32Array; letterIndex: Uint8Array } {
+  const canvas = document.createElement("canvas");
+  const W = 1024;
+  const H = 256;
+  canvas.width = W;
+  canvas.height = H;
+  const ctx = canvas.getContext("2d", { willReadFrequently: true })!;
+  ctx.fillStyle = "#000";
+  ctx.fillRect(0, 0, W, H);
+  ctx.fillStyle = "#fff";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.font = "900 200px 'Space Grotesk', system-ui, sans-serif";
+  ctx.fillText(text, W / 2, H / 2);
 
-  useFrame((_, delta) => {
-    if (!ref.current) return;
-    ref.current.rotation.y += delta * 0.03;
-    const mat = ref.current.material as THREE.PointsMaterial;
-    const target = phase >= 2 ? 0.85 : phase >= 1 ? 0.55 : 0.15;
-    mat.opacity += (target - mat.opacity) * 0.05;
+  // Per-letter rough x-bounds for assigning letter index
+  const letters = text.split("");
+  const widths = letters.map((ch) => ctx.measureText(ch).width);
+  const total = widths.reduce((a, b) => a + b, 0);
+  let cursor = (W - total) / 2;
+  const bounds: { start: number; end: number }[] = [];
+  for (const w of widths) {
+    bounds.push({ start: cursor, end: cursor + w });
+    cursor += w;
+  }
+
+  const img = ctx.getImageData(0, 0, W, H).data;
+  const candidates: { x: number; y: number }[] = [];
+  // sparse sampling
+  for (let y = 0; y < H; y += 3) {
+    for (let x = 0; x < W; x += 3) {
+      if (img[(y * W + x) * 4] > 128) candidates.push({ x, y });
+    }
+  }
+
+  // shuffle and slice
+  for (let i = candidates.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [candidates[i], candidates[j]] = [candidates[j], candidates[i]];
+  }
+  const picked = candidates.slice(0, count);
+
+  const positions = new Float32Array(picked.length * 3);
+  const letterIndex = new Uint8Array(picked.length);
+
+  // Map canvas px → 3D space (roughly -3..3 wide, -0.75..0.75 tall)
+  const sx = 6 / W;
+  const sy = 1.5 / H;
+  picked.forEach((p, i) => {
+    const x = (p.x - W / 2) * sx;
+    const y = -(p.y - H / 2) * sy;
+    positions[i * 3] = x;
+    positions[i * 3 + 1] = y;
+    positions[i * 3 + 2] = (Math.random() - 0.5) * 0.15;
+
+    // assign letter index by x bound
+    let li = 0;
+    for (let b = 0; b < bounds.length; b++) {
+      if (p.x >= bounds[b].start && p.x <= bounds[b].end) {
+        li = b;
+        break;
+      }
+    }
+    letterIndex[i] = li;
   });
 
+  return { positions, letterIndex };
+}
+
+/* ============================================================
+   Forge — the assembly mesh
+============================================================ */
+const Forge = ({
+  count,
+  letters,
+  progressRef,
+}: {
+  count: number;
+  letters: number;
+  progressRef: React.MutableRefObject<{ overall: number; perLetter: number[] }>;
+}) => {
+  const ref = useRef<THREE.InstancedMesh>(null);
+  const dummy = useMemo(() => new THREE.Object3D(), []);
+
+  const { targets, indices, starts, scales, rotAxes } = useMemo(() => {
+    const sampled = sampleTextTargets("MIB_", count);
+    const n = sampled.positions.length / 3;
+    const starts = new Float32Array(n * 3);
+    const scales = new Float32Array(n);
+    const rotAxes = new Float32Array(n * 3);
+    for (let i = 0; i < n; i++) {
+      // start far from center on a random direction
+      const dir = new THREE.Vector3(
+        (Math.random() - 0.5) * 2,
+        (Math.random() - 0.5) * 2,
+        (Math.random() - 0.5) * 2
+      ).normalize();
+      const dist = 8 + Math.random() * 12;
+      starts[i * 3] = dir.x * dist;
+      starts[i * 3 + 1] = dir.y * dist;
+      starts[i * 3 + 2] = dir.z * dist - 4;
+      scales[i] = 0.025 + Math.random() * 0.04;
+      rotAxes[i * 3] = Math.random() * Math.PI * 2;
+      rotAxes[i * 3 + 1] = Math.random() * Math.PI * 2;
+      rotAxes[i * 3 + 2] = Math.random() * Math.PI * 2;
+    }
+    return {
+      targets: sampled.positions,
+      indices: sampled.letterIndex,
+      starts,
+      scales,
+      rotAxes,
+    };
+  }, [count]);
+
+  const total = targets.length / 3;
+  const _v = useMemo(() => new THREE.Vector3(), []);
+
+  useFrame((state) => {
+    if (!ref.current) return;
+    const t = state.clock.getElapsedTime();
+    const { overall, perLetter } = progressRef.current;
+
+    for (let i = 0; i < total; i++) {
+      const li = indices[i];
+      // per-letter progress 0..1 (each letter has its own gsap timeline)
+      const lp = perLetter[li] ?? 0;
+      // ease-out cubic
+      const e = 1 - Math.pow(1 - lp, 3);
+
+      const sx = starts[i * 3];
+      const sy = starts[i * 3 + 1];
+      const sz = starts[i * 3 + 2];
+      const tx = targets[i * 3];
+      const ty = targets[i * 3 + 1];
+      const tz = targets[i * 3 + 2];
+
+      const x = sx + (tx - sx) * e;
+      const y = sy + (ty - sy) * e;
+      const z = sz + (tz - sz) * e;
+      dummy.position.set(x, y, z);
+
+      // spin rapidly while traveling, settle when assembled
+      const spin = (1 - e) * 8;
+      dummy.rotation.set(
+        rotAxes[i * 3] + t * spin,
+        rotAxes[i * 3 + 1] + t * spin * 0.8,
+        rotAxes[i * 3 + 2] + t * spin * 0.6
+      );
+
+      // breathing pulse after assembly
+      const breathe = overall > 0.95 ? 1 + Math.sin(t * 5) * 0.12 : 1;
+      const s = scales[i] * (0.4 + 0.6 * e) * breathe;
+      dummy.scale.setScalar(s);
+
+      dummy.updateMatrix();
+      ref.current.setMatrixAt(i, dummy.matrix);
+    }
+    ref.current.instanceMatrix.needsUpdate = true;
+  });
+
+  return (
+    <instancedMesh ref={ref} args={[undefined as any, undefined as any, total]}>
+      <octahedronGeometry args={[1, 0]} />
+      <meshStandardMaterial
+        color="#22d3ee"
+        emissive="#22d3ee"
+        emissiveIntensity={1.6}
+        metalness={0.85}
+        roughness={0.18}
+      />
+    </instancedMesh>
+  );
+};
+
+/* ============================================================
+   Drifting code-glyph sparks (background ambience)
+============================================================ */
+const Sparks = ({ count }: { count: number }) => {
+  const ref = useRef<THREE.Points>(null);
+  const positions = useMemo(() => {
+    const a = new Float32Array(count * 3);
+    for (let i = 0; i < count; i++) {
+      a[i * 3] = (Math.random() - 0.5) * 18;
+      a[i * 3 + 1] = (Math.random() - 0.5) * 12;
+      a[i * 3 + 2] = (Math.random() - 0.5) * 14 - 4;
+    }
+    return a;
+  }, [count]);
+  useFrame((_, d) => {
+    if (!ref.current) return;
+    ref.current.rotation.y += d * 0.04;
+  });
   return (
     <points ref={ref}>
       <bufferGeometry>
         <bufferAttribute attach="attributes-position" args={[positions, 3]} />
       </bufferGeometry>
       <pointsMaterial
-        size={0.045}
+        size={0.03}
         color="#a5f3fc"
         transparent
-        opacity={0}
+        opacity={0.55}
         sizeAttenuation
         depthWrite={false}
       />
@@ -63,90 +231,16 @@ const Starfield = ({ count = 800, phase }: { count?: number; phase: number }) =>
 };
 
 /* ============================================================
-   ACT 2 — Shard assembly (instanced, springs into wordmark area)
+   Shockwave ring (Act 4 ignition)
 ============================================================ */
-const Shards = ({ count = 60, phase }: { count?: number; phase: number }) => {
-  const ref = useRef<THREE.InstancedMesh>(null);
-  const dummy = useMemo(() => new THREE.Object3D(), []);
-  const data = useMemo(() => {
-    return Array.from({ length: count }).map(() => {
-      const target = new THREE.Vector3(
-        (Math.random() - 0.5) * 3.2,
-        (Math.random() - 0.5) * 1.4,
-        (Math.random() - 0.5) * 0.6
-      );
-      const start = target
-        .clone()
-        .add(
-          new THREE.Vector3(
-            (Math.random() - 0.5) * 14,
-            (Math.random() - 0.5) * 10,
-            (Math.random() - 0.5) * 14 - 4
-          )
-        );
-      return {
-        start,
-        target,
-        rotStart: new THREE.Vector3(Math.random() * 6, Math.random() * 6, Math.random() * 6),
-        rotTarget: new THREE.Vector3(0, 0, 0),
-        scale: 0.06 + Math.random() * 0.12,
-      };
-    });
-  }, [count]);
-
-  useFrame((state) => {
-    if (!ref.current) return;
-    // assembly progress: 0 during act1, 0→1 across act2
-    const t = state.clock.getElapsedTime();
-    let p = 0;
-    if (phase >= 2) p = Math.min(1, (t - (ref.current.userData.t2Start || t)) / 1.1);
-    if (phase === 2 && !ref.current.userData.t2Start)
-      ref.current.userData.t2Start = t;
-    const eased = 1 - Math.pow(1 - p, 3);
-
-    for (let i = 0; i < count; i++) {
-      const d = data[i];
-      const x = d.start.x + (d.target.x - d.start.x) * eased;
-      const y = d.start.y + (d.target.y - d.start.y) * eased;
-      const z = d.start.z + (d.target.z - d.start.z) * eased;
-      dummy.position.set(x, y, z);
-      const rx = d.rotStart.x + (d.rotTarget.x - d.rotStart.x) * eased + t * 0.2;
-      const ry = d.rotStart.y + (d.rotTarget.y - d.rotStart.y) * eased + t * 0.15;
-      const rz = d.rotStart.z + (d.rotTarget.z - d.rotStart.z) * eased;
-      dummy.rotation.set(rx, ry, rz);
-      const breathe = phase >= 3 ? 1 + Math.sin(t * 4) * 0.08 : 1;
-      dummy.scale.setScalar(d.scale * (0.4 + 0.6 * eased) * breathe);
-      dummy.updateMatrix();
-      ref.current.setMatrixAt(i, dummy.matrix);
-    }
-    ref.current.instanceMatrix.needsUpdate = true;
-  });
-
-  return (
-    <instancedMesh ref={ref} args={[undefined as any, undefined as any, count]}>
-      <octahedronGeometry args={[1, 0]} />
-      <meshStandardMaterial
-        color="#22d3ee"
-        emissive="#22d3ee"
-        emissiveIntensity={1.2}
-        metalness={0.9}
-        roughness={0.15}
-      />
-    </instancedMesh>
-  );
-};
-
-/* ============================================================
-   ACT 3 — Shockwave ring expanding from center
-============================================================ */
-const Shockwave = ({ phase }: { phase: number }) => {
+const Shockwave = ({ trigger }: { trigger: boolean }) => {
   const ref = useRef<THREE.Mesh>(null);
   const matRef = useRef<THREE.MeshBasicMaterial>(null);
   const startRef = useRef<number | null>(null);
 
   useFrame((state) => {
     if (!ref.current || !matRef.current) return;
-    if (phase < 3) {
+    if (!trigger) {
       ref.current.scale.setScalar(0.01);
       matRef.current.opacity = 0;
       startRef.current = null;
@@ -154,9 +248,8 @@ const Shockwave = ({ phase }: { phase: number }) => {
     }
     if (startRef.current === null) startRef.current = state.clock.getElapsedTime();
     const t = state.clock.getElapsedTime() - startRef.current;
-    const s = 0.2 + t * 6;
-    ref.current.scale.setScalar(s);
-    matRef.current.opacity = Math.max(0, 0.7 - t * 1.2);
+    ref.current.scale.setScalar(0.4 + t * 7);
+    matRef.current.opacity = Math.max(0, 0.85 - t * 1.1);
   });
 
   return (
@@ -177,12 +270,18 @@ const Shockwave = ({ phase }: { phase: number }) => {
 /* ============================================================
    Camera dolly
 ============================================================ */
-const CameraRig = ({ phase }: { phase: number }) => {
+const CameraRig = ({
+  phaseRef,
+}: {
+  phaseRef: React.MutableRefObject<number>;
+}) => {
   const { camera } = useThree();
-  useFrame((_, delta) => {
-    const targetZ = phase >= 3 ? 4.2 : phase >= 2 ? 2.6 : 5.5;
-    camera.position.z += (targetZ - camera.position.z) * Math.min(1, delta * 2.4);
-    camera.position.x += (Math.sin(performance.now() / 2200) * 0.25 - camera.position.x) * 0.02;
+  useFrame((_, d) => {
+    const p = phaseRef.current; // 0..1 overall, plus 1.x for ignition
+    const targetZ = p >= 1 ? 1.2 : p >= 0.85 ? 3.2 : p >= 0.4 ? 4 : 6.5;
+    camera.position.z += (targetZ - camera.position.z) * Math.min(1, d * 2);
+    camera.position.x +=
+      (Math.sin(performance.now() / 2400) * 0.15 - camera.position.x) * 0.02;
     camera.lookAt(0, 0, 0);
   });
   return null;
@@ -191,30 +290,45 @@ const CameraRig = ({ phase }: { phase: number }) => {
 /* ============================================================
    Scene
 ============================================================ */
-const Scene = ({ phase, tier }: { phase: number; tier: string }) => {
+const Scene = ({
+  tier,
+  progressRef,
+  ignite,
+  phaseRef,
+}: {
+  tier: string;
+  progressRef: React.MutableRefObject<{ overall: number; perLetter: number[] }>;
+  ignite: boolean;
+  phaseRef: React.MutableRefObject<number>;
+}) => {
   const heavy = tier === "high";
-  const starCount = tier === "high" ? 800 : tier === "mid" ? 400 : 200;
-  const shardCount = tier === "high" ? 60 : 40;
+  const fragmentCount = tier === "high" ? 1400 : 700;
+  const sparkCount = tier === "high" ? 600 : 250;
 
   return (
     <>
-      <CameraRig phase={phase} />
-      <ambientLight intensity={0.4} />
-      <pointLight position={[3, 3, 3]} intensity={1.4} color="#22d3ee" />
-      <pointLight position={[-3, -2, 2]} intensity={0.9} color="#fbbf24" />
-      <Starfield count={starCount} phase={phase} />
-      <Shards count={shardCount} phase={phase} />
-      <Shockwave phase={phase} />
+      <CameraRig phaseRef={phaseRef} />
+      <ambientLight intensity={0.45} />
+      <pointLight position={[3, 3, 3]} intensity={1.5} color="#22d3ee" />
+      <pointLight position={[-3, -2, 2]} intensity={1} color="#fbbf24" />
+      <Sparks count={sparkCount} />
+      <Forge count={fragmentCount} letters={4} progressRef={progressRef} />
+      <Shockwave trigger={ignite} />
       {heavy && (
         <EffectComposer multisampling={0}>
-          <Bloom intensity={0.9} luminanceThreshold={0.25} luminanceSmoothing={0.2} mipmapBlur />
+          <Bloom
+            intensity={1.1}
+            luminanceThreshold={0.22}
+            luminanceSmoothing={0.2}
+            mipmapBlur
+          />
           <ChromaticAberration
-            offset={new THREE.Vector2(phase >= 3 ? 0.0025 : 0.0009, phase >= 3 ? 0.0025 : 0.0009) as any}
+            offset={new THREE.Vector2(ignite ? 0.003 : 0.001, ignite ? 0.003 : 0.001) as any}
             radialModulation={false}
             modulationOffset={0}
             blendFunction={BlendFunction.NORMAL}
           />
-          <Vignette eskil={false} offset={0.2} darkness={0.65} />
+          <Vignette eskil={false} offset={0.2} darkness={0.7} />
         </EffectComposer>
       )}
     </>
@@ -222,101 +336,98 @@ const Scene = ({ phase, tier }: { phase: number; tier: string }) => {
 };
 
 /* ============================================================
-   Boot Loader (host)
+   Boot Loader — "Forge of MIB_"
 ============================================================ */
 const BootLoader = ({ onComplete }: { onComplete: () => void }) => {
   const reduced = useReducedMotion();
   const perf = usePerformanceGuardrail();
-  const [phase, setPhase] = useState(0); // 0 awaken · 1 typing · 2 assemble · 3 lock · 4 exit
-  const [lineIndex, setLineIndex] = useState(0);
-  const [charIndex, setCharIndex] = useState(0);
-  const [displayedLines, setDisplayedLines] = useState<string[]>([]);
+  const [exiting, setExiting] = useState(false);
+  const [igniteFlash, setIgniteFlash] = useState(false);
+  const [ignite, setIgnite] = useState(false);
   const finished = useRef(false);
+
+  // shared progress refs (mutated by GSAP, read by useFrame — no React re-renders)
+  const progressRef = useRef<{ overall: number; perLetter: number[] }>({
+    overall: 0,
+    perLetter: [0, 0, 0, 0],
+  });
+  const phaseRef = useRef(0);
 
   const finish = () => {
     if (finished.current) return;
     finished.current = true;
-    setPhase(4);
-    setTimeout(onComplete, 600);
+    setIgnite(true);
+    setIgniteFlash(true);
+    setTimeout(() => setExiting(true), 350);
+    setTimeout(onComplete, 950);
   };
 
-  // Keyboard skip
+  // Skip on key / click
   useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if (e.key === "Escape" || e.key === "Enter") finish();
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape" || e.key === "Enter" || e.key === " ") finish();
     };
-    window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
   }, []);
 
-  // boot sound
+  // GSAP master timeline drives the assembly + ignition
   useEffect(() => {
-    if (reduced) return;
-    try {
-      const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.type = "sine";
-      osc.frequency.setValueAtTime(220, ctx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(660, ctx.currentTime + 0.6);
-      gain.gain.setValueAtTime(0.02, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.7);
-      osc.connect(gain).connect(ctx.destination);
-      osc.start();
-      osc.stop(ctx.currentTime + 0.7);
-    } catch {
-      /* no-op */
-    }
-  }, [reduced]);
-
-  // Act timing
-  useEffect(() => {
-    const t1 = setTimeout(() => setPhase(1), 350); // start typing
-    const t2 = setTimeout(() => setPhase(2), 700); // assemble
-    const t3 = setTimeout(() => setPhase(3), 2100); // lock + shockwave
-    const t4 = setTimeout(() => finish(), 3000);
-    return () => {
-      clearTimeout(t1);
-      clearTimeout(t2);
-      clearTimeout(t3);
-      clearTimeout(t4);
-    };
-  }, []);
-
-  // typing lines
-  useEffect(() => {
-    if (phase < 1 || phase >= 4) return;
-    if (lineIndex >= BOOT_LINES.length) return;
-    const cur = BOOT_LINES[lineIndex];
-    if (charIndex < cur.length) {
-      const t = setTimeout(() => setCharIndex((c) => c + 1), 18);
+    if (reduced || !perf.enable3DBoot) {
+      const t = setTimeout(() => onComplete(), 700);
       return () => clearTimeout(t);
     }
-    const t = setTimeout(() => {
-      setDisplayedLines((p) => [...p, cur]);
-      setLineIndex((l) => l + 1);
-      setCharIndex(0);
-    }, 90);
-    return () => clearTimeout(t);
-  }, [phase, lineIndex, charIndex]);
 
-  /* ---------- Reduced-motion / low-tier fallback ---------- */
+    const tl = gsap.timeline({
+      onUpdate: () => {
+        phaseRef.current = tl.progress();
+      },
+      onComplete: () => finish(),
+    });
+
+    // Act 1 — Void (1.0s): nothing happens, just camera + sparks
+    tl.to({}, { duration: 1.0 });
+
+    // Act 2 — Call (1.4s): all letters start drifting in slowly (slight progress)
+    tl.to(progressRef.current.perLetter, {
+      0: 0.15,
+      1: 0.15,
+      2: 0.15,
+      3: 0.15,
+      duration: 1.4,
+      ease: "power1.in",
+    });
+
+    // Act 3 — Assembly: M, I, B, _ snap into place sequentially
+    tl.to(progressRef.current.perLetter, { 0: 1, duration: 0.55, ease: "power3.out" });
+    tl.to(progressRef.current.perLetter, { 1: 1, duration: 0.55, ease: "power3.out" }, "-=0.15");
+    tl.to(progressRef.current.perLetter, { 2: 1, duration: 0.55, ease: "power3.out" }, "-=0.15");
+    tl.to(progressRef.current.perLetter, { 3: 1, duration: 0.5, ease: "power3.out" }, "-=0.15");
+
+    // brief lock
+    tl.to(progressRef.current, { overall: 1, duration: 0.5, ease: "power2.inOut" });
+
+    // hold a beat then ignition triggers via onComplete
+    tl.to({}, { duration: 0.4 });
+
+    return () => {
+      tl.kill();
+    };
+  }, [reduced, perf.enable3DBoot]);
+
+  /* Reduced-motion / low-tier fallback */
   if (reduced || !perf.enable3DBoot) {
     return (
       <AnimatePresence>
-        {phase < 4 && (
+        {!exiting && (
           <motion.div
             className="fixed inset-0 z-[10000] bg-background flex items-center justify-center"
             exit={{ opacity: 0 }}
             transition={{ duration: 0.4 }}
           >
-            <motion.h1
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="font-display text-4xl md:text-6xl font-bold gradient-text"
-            >
+            <h1 className="font-display text-5xl md:text-7xl font-bold gradient-text">
               MIB_
-            </motion.h1>
+            </h1>
           </motion.div>
         )}
       </AnimatePresence>
@@ -325,21 +436,27 @@ const BootLoader = ({ onComplete }: { onComplete: () => void }) => {
 
   return (
     <AnimatePresence>
-      {phase < 4 && (
+      {!exiting && (
         <motion.div
-          className="fixed inset-0 z-[10000] bg-background overflow-hidden"
-          exit={{ opacity: 0, scale: 1.08, filter: "blur(16px)" }}
+          className="fixed inset-0 z-[10000] bg-background overflow-hidden cursor-pointer"
+          onClick={finish}
+          exit={{ opacity: 0, scale: 1.12, filter: "blur(20px)" }}
           transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
         >
           {/* 3D Canvas */}
           <div className="absolute inset-0">
             <Canvas
-              camera={{ position: [0, 0, 5.5], fov: 50 }}
+              camera={{ position: [0, 0, 6.5], fov: 50 }}
               gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
-              dpr={[1, 1.5]}
+              dpr={[1, perf.tier === "high" ? 1.75 : 1.25]}
             >
               <Suspense fallback={null}>
-                <Scene phase={phase} tier={perf.tier} />
+                <Scene
+                  tier={perf.tier}
+                  progressRef={progressRef}
+                  ignite={ignite}
+                  phaseRef={phaseRef}
+                />
               </Suspense>
             </Canvas>
           </div>
@@ -353,84 +470,42 @@ const BootLoader = ({ onComplete }: { onComplete: () => void }) => {
             }}
           />
 
+          {/* Ignition flash */}
+          <AnimatePresence>
+            {igniteFlash && (
+              <motion.div
+                className="absolute inset-0 pointer-events-none bg-white"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: [0, 0.85, 0] }}
+                transition={{ duration: 0.55, ease: "easeOut" }}
+              />
+            )}
+          </AnimatePresence>
+
           {/* Skip button */}
           <motion.button
             initial={{ opacity: 0 }}
-            animate={{ opacity: phase >= 1 ? 1 : 0 }}
-            transition={{ delay: 0.2 }}
-            onClick={finish}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.4 }}
+            onClick={(e) => {
+              e.stopPropagation();
+              finish();
+            }}
             className="absolute top-6 right-6 z-20 font-mono text-[11px] uppercase tracking-[0.25em] text-muted-foreground hover:text-primary border border-border/40 px-3 py-1.5 rounded-md backdrop-blur-sm bg-background/30 transition-colors"
             aria-label="Skip intro"
           >
-            Skip · ESC
+            Skip intro →
           </motion.button>
 
-          {/* System log */}
-          <div className="absolute top-6 left-6 font-mono text-[11px] text-primary/70 space-y-1 max-w-[80vw] z-10">
-            {displayedLines.map((line, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, x: -8 }}
-                animate={{ opacity: 0.85, x: 0 }}
-                className="flex items-center gap-2"
-              >
-                <span className="text-accent/70">▸</span>
-                <span>{line}</span>
-                <span className="text-accent">✓</span>
-              </motion.div>
-            ))}
-            {phase >= 1 && lineIndex < BOOT_LINES.length && (
-              <div className="flex items-center gap-2">
-                <span className="text-accent/70">▸</span>
-                <span>
-                  {BOOT_LINES[lineIndex].slice(0, charIndex)}
-                  <span className="text-primary animate-pulse">█</span>
-                </span>
-              </div>
-            )}
-          </div>
-
-          {/* Center wordmark — appears in Act 3 */}
-          <div className="relative z-10 h-full flex flex-col items-center justify-center pointer-events-none px-4">
-            <AnimatePresence>
-              {phase >= 3 && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10, filter: "blur(14px)", letterSpacing: "0.4em" }}
-                  animate={{ opacity: 1, y: 0, filter: "blur(0px)", letterSpacing: "0.05em" }}
-                  transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-                  className="text-center"
-                >
-                  <h1 className="font-display text-5xl md:text-7xl font-bold tracking-tight">
-                    <span className="gradient-text">MIB_</span>
-                  </h1>
-                  <motion.p
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.25 }}
-                    className="mt-3 text-xs md:text-sm text-muted-foreground font-mono tracking-[0.3em] uppercase"
-                  >
-                    Mohammed Ilyas B · AI-Augmented Engineer
-                  </motion.p>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-
-          {/* Progress bar */}
-          <div className="absolute bottom-6 left-6 right-6 z-10">
-            <div className="h-px bg-border/30 rounded-full overflow-hidden">
-              <motion.div
-                className="h-full bg-gradient-to-r from-primary via-accent to-primary"
-                initial={{ width: "0%" }}
-                animate={{ width: "100%" }}
-                transition={{ duration: 2.6, ease: "linear" }}
-              />
-            </div>
-            <div className="flex justify-between mt-2 font-mono text-[10px] text-muted-foreground/60">
-              <span>SYS.BOOT v2026.05</span>
-              <span>RENDER · ENGINE READY</span>
-            </div>
-          </div>
+          {/* Whisper hint */}
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 0.5 }}
+            transition={{ delay: 1.4, duration: 0.8 }}
+            className="absolute bottom-8 left-1/2 -translate-x-1/2 text-[10px] uppercase tracking-[0.35em] text-muted-foreground font-mono z-10 pointer-events-none"
+          >
+            Forging the experience
+          </motion.p>
         </motion.div>
       )}
     </AnimatePresence>

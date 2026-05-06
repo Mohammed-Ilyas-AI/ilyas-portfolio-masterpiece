@@ -1,4 +1,5 @@
 import { motion, useScroll, useTransform } from "framer-motion";
+import AmbientDepth from "@/lib/motion/AmbientDepth";
 import { useRef } from "react";
 import { experiences } from "@/data/portfolio-data";
 import { AnimatedSection } from "@/lib/animations";
@@ -126,6 +127,7 @@ const ExperienceSection = () => {
 
   return (
     <section id="experience" className="section-padding relative overflow-hidden" ref={containerRef}>
+      <AmbientDepth variant="mixed" intensity={0.6} />
       {/* Background */}
       <div className="absolute inset-0 bg-gradient-to-b from-background via-secondary/20 to-background" />
       

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import AmbientDepth from "@/lib/motion/AmbientDepth";
 import { motion } from "framer-motion";
 import { AnimatedSection } from "@/lib/animations";
 import { profileData } from "@/data/portfolio-data";
@@ -58,6 +59,7 @@ const ContactSection = () => {
 
   return (
     <section id="contact" className="section-padding relative overflow-hidden">
+      <AmbientDepth variant="mixed" intensity={0.6} />
       {/* Background */}
       <div className="absolute inset-0 bg-gradient-to-t from-secondary/30 to-transparent" />
       <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
