@@ -1,4 +1,4 @@
-import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
+import { motion, useScroll, useTransform, useReducedMotion, MotionValue } from "framer-motion";
 import { useRef } from "react";
 import usePerformanceGuardrail from "@/hooks/usePerformanceGuardrail";
 
@@ -8,9 +8,30 @@ interface ScrollScrubTextProps {
   wordClassName?: string;
 }
 
-/**
- * Reveals text word-by-word as the user scrubs through the section.
- */
+const Word = ({
+  word,
+  progress,
+  start,
+  end,
+  className,
+  withSpace,
+}: {
+  word: string;
+  progress: MotionValue<number>;
+  start: number;
+  end: number;
+  className: string;
+  withSpace: boolean;
+}) => {
+  const opacity = useTransform(progress, [start, end], [0.18, 1]);
+  return (
+    <motion.span style={{ opacity }} className={`inline-block ${className}`}>
+      {word}
+      {withSpace ? "\u00A0" : ""}
+    </motion.span>
+  );
+};
+
 const ScrollScrubText = ({ text, className = "", wordClassName = "" }: ScrollScrubTextProps) => {
   const ref = useRef<HTMLParagraphElement>(null);
   const reduced = useReducedMotion();
@@ -29,17 +50,17 @@ const ScrollScrubText = ({ text, className = "", wordClassName = "" }: ScrollScr
 
   return (
     <p ref={ref} className={className}>
-      {words.map((w, i) => {
-        const start = i / words.length;
-        const end = start + 1 / words.length;
-        const opacity = useTransform(scrollYProgress, [start, end], [0.18, 1]);
-        return (
-          <motion.span key={i} style={{ opacity }} className={`inline-block ${wordClassName}`}>
-            {w}
-            {i < words.length - 1 ? "\u00A0" : ""}
-          </motion.span>
-        );
-      })}
+      {words.map((w, i) => (
+        <Word
+          key={i}
+          word={w}
+          progress={scrollYProgress}
+          start={i / words.length}
+          end={i / words.length + 1 / words.length}
+          className={wordClassName}
+          withSpace={i < words.length - 1}
+        />
+      ))}
     </p>
   );
 };
