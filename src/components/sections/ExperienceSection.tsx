@@ -127,6 +127,7 @@ const ExperienceSection = () => {
 
   return (
     <section id="experience" className="section-padding relative overflow-hidden" ref={containerRef}>
+      <AmbientDepth variant="mixed" intensity={0.6} />
       {/* Background */}
       <div className="absolute inset-0 bg-gradient-to-b from-background via-secondary/20 to-background" />
       
