@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import AmbientDepth from "@/lib/motion/AmbientDepth";
 import { profileData } from "@/data/portfolio-data";
 import { AnimatedSection } from "@/lib/animations";
 import { ArrowRight, Mail, Download, Calendar } from "lucide-react";
@@ -10,6 +11,7 @@ const CTASection = () => {
 
   return (
     <section id="cta" className="section-padding relative overflow-hidden">
+      <AmbientDepth variant="mixed" intensity={0.6} />
       <div className="section-container relative z-10">
         <AnimatedSection>
           <div className="relative glass-card rounded-3xl p-8 md:p-14 overflow-hidden text-center">

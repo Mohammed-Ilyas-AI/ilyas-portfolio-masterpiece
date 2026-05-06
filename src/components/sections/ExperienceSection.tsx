@@ -1,4 +1,5 @@
 import { motion, useScroll, useTransform } from "framer-motion";
+import AmbientDepth from "@/lib/motion/AmbientDepth";
 import { useRef } from "react";
 import { experiences } from "@/data/portfolio-data";
 import { AnimatedSection } from "@/lib/animations";

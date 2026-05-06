@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import AmbientDepth from "@/lib/motion/AmbientDepth";
 import { engineeringMindset } from "@/data/portfolio-data";
 import { AnimatedSection } from "@/lib/animations";
 import ScrollReveal from "@/lib/motion/ScrollReveal";
@@ -7,6 +8,7 @@ import ScrollScrubText from "@/lib/motion/ScrollScrubText";
 const MindsetSection = () => {
   return (
     <section id="mindset" className="section-padding relative overflow-hidden">
+      <AmbientDepth variant="mixed" intensity={0.6} />
       <div className="absolute inset-0 opacity-[0.03]" style={{
         backgroundImage:
           "linear-gradient(hsl(var(--primary)) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--primary)) 1px, transparent 1px)",
