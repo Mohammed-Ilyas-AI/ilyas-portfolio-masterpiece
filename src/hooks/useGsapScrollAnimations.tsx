@@ -34,7 +34,8 @@ const useGsapScrollAnimations = (enabled: boolean = true) => {
             scrollTrigger: {
               trigger: section,
               start: "top 90%",
-              toggleActions: "play none none none",
+              end: "bottom 10%",
+              toggleActions: "play reverse play reverse",
             },
           }
         );
@@ -53,7 +54,8 @@ const useGsapScrollAnimations = (enabled: boolean = true) => {
               scrollTrigger: {
                 trigger: section,
                 start: "top 85%",
-                toggleActions: "play none none none",
+                end: "bottom 15%",
+                toggleActions: "play reverse play reverse",
               },
             }
           );
