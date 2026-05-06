@@ -1,182 +1,139 @@
+# Elite Animation Upgrade Plan (v2)
 
-# Elite Animation System + Cinematic 3D Boot Loader
-
-Goal: transform the portfolio from "animations applied" into a cinematic, intentional product experience (Apple/Linear/Vercel grade). Every effect must serve storytelling, focus, or depth — never decoration. Boot loader becomes a true 3D cinematic intro.
-
----
-
-## 1. Section-by-Section Animation Map
-
-```text
-BOOT LOADER  → cinematic 3D intro (NEW): camera flythrough + logo assembly
-HERO         → multi-layer parallax + load choreography + magnetic CTAs
-VALUE PROP   → scroll-pinned headline scale + animated counters
-TRUST        → 3D tilt cards + bidirectional reverse reveal
-PROJECTS     → cinematic zoom-in/out + 3D tilt cards w/ spotlight
-MINDSET      → scroll-scrubbed word-by-word reveal
-CAPABILITIES → grid stagger + bidirectional fade
-EXPERIENCE   → SVG timeline path drawing on scroll
-CTA          → parallax background + scale-pulse
-CONTACT      → fade + magnetic inputs
-```
-
-| Section | Animation | Trigger | Purpose | Cost |
-|---|---|---|---|---|
-| Boot | 3D camera flythrough → logo assembly → fade-out | mount | cinematic first impression | medium (one-time) |
-| Hero | 3-layer parallax (bg/mid/fg) | scroll Y | depth | low |
-| Value | Pinned headline scales 1→0.85 | ScrollTrigger pin | focus shift | medium |
-| Value | Counters 0→N | inView | tangibility | low |
-| Trust | 3D tilt + spotlight | hover | premium | low |
-| Trust | Bidirectional reveal | IO | dynamic flow | low |
-| Projects | scale 0.94→1 enter, 1→1.03+blur leave | scroll progress | cinematic | medium |
-| Projects | Card 3D tilt + cursor spotlight | hover | depth | low |
-| Mindset | Word-by-word scrub reveal | ScrollTrigger scrub | storytelling | medium |
-| Capabilities | Stagger grid bidirectional | inView | rhythm | low |
-| Experience | SVG timeline path draws | scrub | progress narrative | low |
-| CTA | Background gradient parallax + pulse | scroll | emphasis | low |
-| Contact | Field magnetism + fade | focus / inView | polish | low |
+Four focused upgrades. Cinematic intro reimagined as a narrative "assembly" sequence.
 
 ---
 
-## 2. Cinematic 3D Boot Loader (NEW)
+## 1. Cinematic 3D Intro — "The Forge" (~6–8s, skippable)
 
-Replaces current `BootLoader.tsx`. Built with `@react-three/fiber` + `@react-three/drei` (already installed).
+A story-driven 3D intro where scattered fragments **assemble** into the brand mark, evoking the satisfaction of a supercar build reveal fused with the magical convergence of Harry Potter title sequences.
 
-**Three-act sequence (~3.2s total):**
+**Concept: "Forge of MIB_"**
+The user witnesses raw geometry, code shards, and light particles flying in from the void, snapping together with magnetic precision into the MIB_ monogram, which then ignites and dissolves into the portfolio.
+
+**Story Acts (~7s total):**
 
 ```text
-ACT 1 (0.0–1.2s) — "AWAKEN"
-  • Black void. Camera deep inside scene.
-  • Particle starfield ignites (instanced points, 800 nodes).
-  • Volumetric fog reveals a dark grid floor with neon edge glow.
-  • Audio-reactive-style pulse (visual only) syncs with subtle bass-less hum.
+Act 1 — VOID            0.0–1.2s
+  Pure black. Faint cyan grid horizon fades in.
+  A single spark drifts into frame. Low rumble + sub-bass tick (muted by default).
 
-ACT 2 (1.2–2.4s) — "ASSEMBLE"
-  • Camera dollies forward through the starfield (z: 8 → 2).
-  • Fragmented geometric shards (instanced meshes) fly in from off-screen
-    and snap together into the "MIB_" wordmark in 3D space.
-  • Each shard uses spring physics + slight rotation overshoot.
-  • Chromatic aberration + bloom peak at impact frame.
+Act 2 — CALL            1.2–2.8s
+  Hundreds of fragments (code glyphs, polygon shards, glowing dust)
+  rush in from all 6 directions toward center, trailing motion blur.
+  Camera slow dolly-in. Chromatic aberration peaks.
 
-ACT 3 (2.4–3.2s) — "HANDOFF"
-  • Logo locks, emits a horizontal scanline shockwave (shader ring).
-  • Camera pulls back slightly, scene desaturates.
-  • Whole canvas scales 1→1.08 + opacity 1→0 → unmounts → Hero revealed.
+Act 3 — ASSEMBLY        2.8–5.2s
+  Fragments magnetically snap into place — letter by letter:
+  M ... I ... B ... _   each lands with a metallic "clank" + light burst.
+  Like watching a supercar chassis bolt itself together,
+  or Harry Potter title letters forging from smoke.
+  Bloom intensifies. Depth-of-field racks focus across the mark.
+
+Act 4 — IGNITION        5.2–6.5s
+  Monogram pulses, emits a shockwave ring.
+  Camera dollies THROUGH the "_" underscore (portal moment).
+  White flash → crossfade into hero (hero scales 0.94 → 1).
 ```
 
-**Tech details:**
-- `<Canvas>` with `dpr={[1, 1.5]}` (cap pixel ratio for perf).
-- Postprocessing: `Bloom` + `ChromaticAberration` from `@react-three/postprocessing` (add dep).
-- Shards: single `InstancedMesh` (1 draw call, ~60 instances).
-- Starfield: `<Points>` with custom shader for size attenuation.
-- Skip button (top-right) appears at 0.4s; `Esc` or click also skips.
-- `sessionStorage` flag (existing) ensures one-per-session.
-- Reduced-motion / low-tier device → fallback to a fast 600ms gradient fade with logo (no Three.js mounted at all).
-- Mobile: simplified — no postprocessing, fewer particles (200), no chromatic aberration.
+**Controls:**
+- Skip button top-right at 0.4s ("Skip intro →")
+- Click / any key / Esc skips
+- `prefers-reduced-motion`: static assembled monogram + 600ms fade
+- `perf.tier === "low"`: 2D SVG assembly (no Canvas), 3s
+- Plays once per session (sessionStorage already wired)
+- Sound OFF by default; tiny mute/unmute toggle
 
-**Files:**
-- Rewrite `src/components/BootLoader.tsx`
-- New: `src/components/boot/Scene.tsx`, `Starfield.tsx`, `LogoAssembly.tsx`, `Shockwave.tsx`
-- New dep: `@react-three/postprocessing@^2.16` (matches r3f v8)
+**Tech stack (already installed):**
+- `@react-three/fiber` + `@react-three/drei` + `@react-three/postprocessing`
+- Instanced meshes for fragments (~600 high / 200 mid)
+- GSAP master timeline conducts acts + handoff
+- Postprocessing: Bloom, ChromaticAberration, Vignette, DepthOfField
+- Fragment "snap" = GSAP tween of instance matrices to target letter positions sampled from SVG monogram path
+- DPR clamped per perf tier; Canvas unmounted on completion
 
 ---
 
-## 3. Animation Architecture (rest of site)
+## 2. Bidirectional Scroll Animations (down AND up)
 
-New primitives in `src/lib/motion/`:
+Reveals re-trigger when scrolling back up, and reverse when leaving viewport.
 
-```text
-ScrollReveal.tsx       # bidirectional reveal (IN entering, OUT leaving)
-ParallaxLayer.tsx      # useScroll + useTransform; speed prop
-ZoomSection.tsx        # scale/blur driven by section scroll progress
-TiltCard.tsx           # 3D perspective tilt + cursor spotlight overlay
-ScrollScrubText.tsx    # word-by-word reveal scrubbed by scroll
-Counter.tsx            # animated number on inView
-useReducedMotion.ts    # respects OS pref + perf guardrail
-```
+- `ScrollReveal` default → `mode="bidirectional"`
+- Section shells wrapped in existing `ZoomSection` (scale + blur + opacity scrub both ways)
+- GSAP ScrollTriggers switch to `toggleActions: "play reverse play reverse"`
+- Counters reset + recount on re-enter
 
-All primitives early-return to static when reduced-motion or low-tier.
-
-## 4. Scroll Storytelling
-
-- Framer Motion `useScroll({ target, offset })` per section (scoped, no global thrash).
-- Adjacent sections share overlapping offsets so opacity/scale curves crossfade — no abrupt cuts.
-- Only ONE pinned moment (Value headline). Overuse kills flow.
-
-## 5. Parallax Depth (Hero + transitions only)
+**Per-section choreography:**
 
 ```text
-bg  (particles)  → y: 0 → -40px   slow
-mid (headline)   → y: 0 → -120px  normal
-fg  (CTAs/chip)  → y: 0 → -180px  fast
-```
-GPU-only `translate3d`. Off on mobile + reduced-motion.
-
-## 6. Immersive Zoom (Projects)
-
-`<ZoomSection>` wraps Projects:
-- Enter 0–0.35: `scale 0.94→1`, `blur 8px→0`.
-- Leave 0.7–1: `scale 1→1.03`, `blur 0→6px`, `opacity 1→0.4`.
-- Mobile: scale only (blur is expensive).
-
-## 7. 3D Hover Tilt (Project + Trust cards, primary CTA)
-
-`perspective: 1000px`, max ±6°, spring `{stiffness:200, damping:20}`. Inner spotlight radial-gradient at 8% opacity follows cursor. Disabled on `(pointer: coarse)`.
-
-## 8. Reverse Reveal
-
-`<ScrollReveal mode="bidirectional">`:
-- Enter from bottom: `y:40→0, opacity:0→1`.
-- Leave from top: `y:0→-20, opacity:1→0.3` (not full 0 — keeps readable on quick scroll-back).
-- `mode="once"` for headings.
-
-## 9. Performance Engineering
-
-- Only `transform`/`opacity`/`filter` (filter desktop-only).
-- `will-change` set on enter, removed on complete.
-- Scoped `useScroll` refs.
-- `React.memo` on TiltCard; mouse handler rAF-throttled.
-- Extend `usePerformanceGuardrail`: `enableParallax`, `enableTilt`, `enableZoom`, `enableScrub`, `enable3DBoot`.
-- Lazy-mount `ScrollScrubText`, `ZoomSection`, boot scene via dynamic import.
-- Trim `useGsapScrollAnimations` / `useAnimationChoreographer` for sections we now own (Trust, Projects, Mindset) — avoid double-animation.
-
-## 10. Responsive Fallbacks
-
-```text
-Desktop ≥1024  → full system + full 3D boot
-Tablet 768–1023 → no blur, no pin-scrub, tilt ±3°, simplified boot (no postFX)
-Mobile <768    → reveals + fades only; parallax/zoom/tilt off; CSS-only boot
-reduced-motion → instant fades, no transforms, CSS-only boot
+Hero            Parallax depth layers + soft blur on scroll-out
+ValueProp       Cards rise + tilt in / fall + tilt out
+TrustSignals    Counters animate in, drain out
+Projects        Cards scale 0.9→1 reveal; reverse on exit
+Mindset         Word-by-word scrub both directions (in place)
+Capabilities    Skill bars fill in / drain out
+Experience      Timeline line draws in / retracts out
+CTA             Glow pulse + scale; soft fade on exit
+Contact         Form fields stagger in / out
 ```
 
-## 11. UX & Accessibility
-
-- Boot loader is skippable (button + Esc + click).
-- Animations never block content >400ms.
-- Headings always readable at rest.
-- Focus outlines never animated.
-- `prefers-reduced-motion` honored at primitive level.
+All gated by `usePerformanceGuardrail` + `prefers-reduced-motion`.
 
 ---
 
-## Implementation Order
+## 3. Project Modal — Internal Scroll + Compact Layout
 
-1. Add motion primitives + extend `usePerformanceGuardrail`.
-2. Rewrite BootLoader with r3f scene (Acts 1–3) + skip + fallbacks. Install `@react-three/postprocessing`.
-3. HeroSection → ParallaxLayer (3 layers).
-4. ProjectsSection → ZoomSection wrapper + TiltCard project cards.
-5. TrustSignalsSection → TiltCard + bidirectional ScrollReveal.
-6. MindsetSection → ScrollScrubText for principles.
-7. ExperienceSection → SVG timeline draw-on-scroll.
-8. ValueProposition → pinned headline + Counter components.
-9. Trim existing global GSAP hooks for refactored sections.
-10. QA: 60fps desktop, mobile fallback, reduced-motion.
+**Problems today:** modal too tall, content cut off, page scrolls instead of modal.
 
-## Dependencies
+**Fixes in `ProjectDetailModal.tsx`:**
+- Add `data-lenis-prevent` on the scroll container (Lenis ignores wheel/touch inside)
+- Lock `body` scroll while open; restore on close
+- Fixed-frame layout:
+  ```text
+  ┌─ Sticky compact header (56px) ─┐
+  │ Scrollable body
+  │   flex-1, min-h-0,
+  │   overflow-y-auto, overscroll-contain
+  └─ Sticky footer w/ "Visit Live" CTA ─┘
+  ```
+- Container: `max-h-[88vh] flex flex-col`
+- Tighter Block spacing; `md:` two-column grid for Architecture / Decisions / Challenges
+- Esc-to-close, focus trap, scroll-to-top on open
+- Mobile: full-height bottom sheet style
 
-Already installed: `framer-motion`, `gsap`, `@react-three/fiber@^8.18`, `@react-three/drei@^9.122`, `three`.
-**New:** `@react-three/postprocessing@^2.16`.
+---
 
-## Out of Scope
+## 4. Deeper, Layered Parallax System
 
-No content/copy changes. No theme/color changes. Particle background untouched (already mouse-reactive).
+Cinematic depth across the whole site, not just hero.
+
+- `ParallaxLayer` gains `depth` prop: `bg | mid | fg | foreground` → speeds `[-120, -70, -30, +20]`
+- New `AmbientDepth` component: per-section background canvas of orbs / grid / glyphs at different depths
+- Hero split into 4 depth planes (orbs, headline, CTA, scroll cue)
+- Projects: card images parallax inside card on scroll
+- Mindset: floating glyphs drift in opposing directions
+- Experience: timeline dots parallax against connector line
+- Footer: gradient horizon parallax
+- Section dividers: SVG wave/noise layers at different rates
+
+GPU-only `translate3d`. Disabled when `perf.enableParallax === false` or reduced-motion.
+
+---
+
+## Technical Notes
+
+- No new dependencies (R3F, drei, postprocessing, GSAP, Framer Motion, Lenis already installed)
+- All behavior gated through `usePerformanceGuardrail` tiers
+- Lenis uses native `data-lenis-prevent` attribute for modal
+- Bidirectional ScrollTrigger config centralized in `useGsapScrollAnimations`
+- Intro Canvas lazy-loaded (`React.lazy`) so 3D bundle never blocks first paint after first session
+
+## Files Touched
+
+- Rewrite: `src/components/BootLoader.tsx`
+- New: `src/components/intro/ForgeScene.tsx`, `Fragments.tsx`, `MonogramTargets.ts`, `IntroOverlay.tsx`
+- Rewrite: `src/components/ProjectDetailModal.tsx`
+- Update: `src/lib/motion/ScrollReveal.tsx`, `ParallaxLayer.tsx`, `ZoomSection.tsx`
+- New: `src/lib/motion/AmbientDepth.tsx`
+- Update: `src/hooks/useGsapScrollAnimations.tsx`, `useAnimationChoreographer.tsx`
+- Update: each section in `src/components/sections/*` for depth layers + bidirectional reveals
