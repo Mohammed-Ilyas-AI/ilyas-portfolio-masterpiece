@@ -48,7 +48,7 @@ export const profileData = {
   phone: "+91 7397751255",
   linkedin: "https://www.linkedin.com/in/ilyasb/",
   github: "https://github.com/mohammedilyas",
-  resumeUrl: "/Md_ilyas.pdf",
+  resumeUrl: "/__l5e/assets-v1/8e6e54b7-1bc7-4dd4-99be-88558be9199f/Mohammed_Ilyas_CV.pdf",
 
   // Hero rotating headline
   roles: [
