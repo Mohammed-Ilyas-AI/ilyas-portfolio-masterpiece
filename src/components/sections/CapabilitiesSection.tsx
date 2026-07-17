@@ -52,19 +52,6 @@ const CapabilitiesSection = () => {
                 viewport={{ once: true, margin: "-50px" }}
                 transition={{ duration: 0.5, delay: i * 0.07 }}
                 whileHover={{ y: -6 }}
-                className="glass-card p-7 rounded-2xl group"
-              >
-        <div className="grid md:grid-cols-2 gap-6">
-          {capabilities.map((cap, i) => {
-            const Icon = iconMap[cap.icon] || Layers;
-            return (
-              <motion.div
-                key={cap.title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-50px" }}
-                transition={{ duration: 0.5, delay: i * 0.07 }}
-                whileHover={{ y: -6 }}
               >
                 <SpotlightCard className="glass-card rounded-2xl group h-full">
                   <div className="p-7">
