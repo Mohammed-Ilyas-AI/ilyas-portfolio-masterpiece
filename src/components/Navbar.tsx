@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { profileData } from "@/data/portfolio-data";
 import { Menu, X } from "lucide-react";
 import ThemeToggle from "./ThemeToggle";
+import ShinyText from "@/lib/motion/ShinyText";
 
 const navItems = [
   { label: "Value", href: "#value" },
@@ -74,31 +75,18 @@ const Navbar = () => {
               whileHover={{ scale: 1.05 }}
               className="font-display text-2xl font-bold relative flex items-center group"
             >
-              {["M", "I", "B"].map((letter, i) => (
+              <span className="relative inline-flex items-center">
+                <ShinyText speed={4} className="font-display text-2xl font-bold">
+                  MIB
+                </ShinyText>
                 <motion.span
-                  key={letter}
-                  className="gradient-text inline-block"
-                  animate={{
-                    y: [0, -3, 0],
-                    opacity: [0.7, 1, 0.7],
-                  }}
-                  transition={{
-                    duration: 2,
-                    repeat: Infinity,
-                    delay: i * 0.2,
-                    ease: "easeInOut",
-                  }}
+                  className="text-accent ml-0.5 font-display text-2xl font-bold"
+                  animate={{ opacity: [0.3, 1, 0.3] }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
                 >
-                  {letter}
+                  _
                 </motion.span>
-              ))}
-              <motion.span
-                className="text-accent ml-0.5"
-                animate={{ opacity: [0, 1, 0] }}
-                transition={{ duration: 1.5, repeat: Infinity }}
-              >
-                _
-              </motion.span>
+              </span>
               {/* Glowing underline on hover */}
               <span className="absolute -bottom-1 left-0 w-full h-[2px] bg-gradient-to-r from-primary via-accent to-primary bg-[length:200%_100%] scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left rounded-full shadow-[0_0_8px_hsl(var(--primary)/0.6),0_0_16px_hsl(var(--accent)/0.3)]" />
             </motion.a>

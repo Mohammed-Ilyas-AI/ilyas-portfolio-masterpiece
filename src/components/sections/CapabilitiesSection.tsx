@@ -3,6 +3,15 @@ import AmbientDepth from "@/lib/motion/AmbientDepth";
 import { capabilities } from "@/data/portfolio-data";
 import { AnimatedSection } from "@/lib/animations";
 import { Layers, Server, Bug, Sparkles, Network, Check, type LucideIcon } from "lucide-react";
+import Marquee from "@/lib/motion/Marquee";
+import SpotlightCard from "@/lib/motion/SpotlightCard";
+
+const TECH_RIBBON = [
+  "Angular 18", "React", "TypeScript", "Node.js", "Express", "RxJS", "NgRx",
+  "MongoDB", "PostgreSQL", "MySQL", "Tailwind", "PrimeNG", "Nx", "Docker",
+  "AWS", "GitHub Actions", "Jenkins", "Cypress", "Jest", "Playwright",
+  "Cursor", "Copilot", "LLM Ops", "Prompt Eng",
+];
 
 const iconMap: Record<string, LucideIcon> = {
   frontend: Layers,
@@ -43,31 +52,51 @@ const CapabilitiesSection = () => {
                 viewport={{ once: true, margin: "-50px" }}
                 transition={{ duration: 0.5, delay: i * 0.07 }}
                 whileHover={{ y: -6 }}
-                className="glass-card p-7 rounded-2xl group"
               >
-                <div className="flex items-start gap-4 mb-4">
-                  <motion.div
-                    whileHover={{ rotate: 8 }}
-                    className="flex-shrink-0 w-12 h-12 rounded-xl bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center group-hover:shadow-lg group-hover:shadow-primary/20 transition-shadow"
-                  >
-                    <Icon className="w-6 h-6 text-primary" />
-                  </motion.div>
-                  <div>
-                    <h3 className="font-display text-xl font-bold mb-1">{cap.title}</h3>
-                    <p className="text-sm text-primary/90">{cap.outcome}</p>
+                <SpotlightCard className="glass-card rounded-2xl group h-full">
+                  <div className="p-7">
+                    <div className="flex items-start gap-4 mb-4">
+                      <motion.div
+                        whileHover={{ rotate: 8 }}
+                        className="flex-shrink-0 w-12 h-12 rounded-xl bg-gradient-to-br from-primary/20 to-accent/20 flex items-center justify-center group-hover:shadow-lg group-hover:shadow-primary/20 transition-shadow"
+                      >
+                        <Icon className="w-6 h-6 text-primary" />
+                      </motion.div>
+                      <div>
+                        <h3 className="font-display text-xl font-bold mb-1">{cap.title}</h3>
+                        <p className="text-sm text-primary/90">{cap.outcome}</p>
+                      </div>
+                    </div>
+                    <ul className="space-y-2.5 pl-1">
+                      {cap.details.map((d) => (
+                        <li key={d} className="flex items-start gap-2.5 text-sm text-muted-foreground">
+                          <Check className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
+                          <span>{d}</span>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
-                </div>
-                <ul className="space-y-2.5 pl-1">
-                  {cap.details.map((d) => (
-                    <li key={d} className="flex items-start gap-2.5 text-sm text-muted-foreground">
-                      <Check className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
-                      <span>{d}</span>
-                    </li>
-                  ))}
-                </ul>
+                </SpotlightCard>
               </motion.div>
             );
           })}
+        </div>
+
+        {/* Tech ribbon marquee */}
+        <div className="mt-14">
+          <p className="text-center text-xs uppercase tracking-[0.25em] text-muted-foreground mb-4">
+            Tools in daily rotation
+          </p>
+          <Marquee duration={40} fade>
+            {TECH_RIBBON.map((t) => (
+              <span
+                key={t}
+                className="px-4 py-2 text-sm font-medium rounded-full border border-border/40 bg-card/40 backdrop-blur-sm text-foreground/85 whitespace-nowrap"
+              >
+                {t}
+              </span>
+            ))}
+          </Marquee>
         </div>
       </div>
     </section>

@@ -2,8 +2,9 @@ import { motion } from "framer-motion";
 import AmbientDepth from "@/lib/motion/AmbientDepth";
 import { engineeringMindset } from "@/data/portfolio-data";
 import { AnimatedSection } from "@/lib/animations";
-import ScrollReveal from "@/lib/motion/ScrollReveal";
 import ScrollScrubText from "@/lib/motion/ScrollScrubText";
+import BentoReveal from "@/lib/motion/BentoReveal";
+import SpotlightCard from "@/lib/motion/SpotlightCard";
 
 const MindsetSection = () => {
   return (
@@ -29,10 +30,10 @@ const MindsetSection = () => {
           <div className="w-20 h-1 mx-auto rounded-full bg-gradient-to-r from-primary to-accent mb-16" />
         </AnimatedSection>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <BentoReveal className="grid md:grid-cols-2 lg:grid-cols-3 gap-6" cols={3} step={0.06}>
           {engineeringMindset.map((m, i) => (
-            <ScrollReveal key={m.title} mode="bidirectional" delay={i * 0.05}>
-              <div className="glass-card p-6 rounded-2xl relative h-full">
+            <SpotlightCard key={m.title} className="glass-card rounded-2xl h-full">
+              <div className="p-6 relative h-full">
                 <div className="font-mono text-xs text-primary/70 mb-3">
                   / {String(i + 1).padStart(2, "0")}
                 </div>
@@ -46,9 +47,9 @@ const MindsetSection = () => {
                   className="mt-5 h-px bg-gradient-to-r from-primary/60 to-transparent origin-left"
                 />
               </div>
-            </ScrollReveal>
+            </SpotlightCard>
           ))}
-        </div>
+        </BentoReveal>
       </div>
     </section>
   );

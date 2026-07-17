@@ -4,6 +4,9 @@ import { profileData } from "@/data/portfolio-data";
 import { ChevronDown, Download, ArrowRight, MapPin } from "lucide-react";
 import MagneticButton from "@/components/MagneticButton";
 import ParallaxLayer from "@/lib/motion/ParallaxLayer";
+import TextGenerate from "@/lib/motion/TextGenerate";
+import ShinyText from "@/lib/motion/ShinyText";
+import AnimatedGradientBorder from "@/lib/motion/AnimatedGradientBorder";
 
 const HeroSection = () => {
   const [currentRoleIndex, setCurrentRoleIndex] = useState(0);
@@ -76,14 +79,14 @@ const HeroSection = () => {
           Hello, I'm
         </motion.p>
 
-        <motion.h1
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.3 }}
+        <TextGenerate
+          as="h1"
+          text={profileData.name}
+          highlight={profileData.name}
           className="font-display text-5xl md:text-7xl lg:text-8xl font-bold mb-6 leading-[1.05]"
-        >
-          <span className="gradient-text animate-gradient">{profileData.name}</span>
-        </motion.h1>
+          delay={0.25}
+          stagger={0.08}
+        />
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -91,14 +94,14 @@ const HeroSection = () => {
           transition={{ duration: 0.6, delay: 0.5 }}
           className="h-12 md:h-16 flex items-center justify-center mb-6"
         >
-          <span className="text-xl md:text-3xl font-display text-foreground/85">
-            {displayText}
-            <motion.span
-              animate={{ opacity: [1, 0] }}
-              transition={{ duration: 0.5, repeat: Infinity }}
-              className="ml-1 inline-block w-0.5 h-7 md:h-8 bg-primary align-middle"
-            />
-          </span>
+          <ShinyText speed={4.5} className="text-xl md:text-3xl font-display font-semibold">
+            {displayText || "\u00A0"}
+          </ShinyText>
+          <motion.span
+            animate={{ opacity: [1, 0] }}
+            transition={{ duration: 0.5, repeat: Infinity }}
+            className="ml-1 inline-block w-0.5 h-7 md:h-8 bg-primary align-middle"
+          />
         </motion.div>
 
         <motion.p
@@ -135,10 +138,12 @@ const HeroSection = () => {
           className="flex flex-col sm:flex-row gap-4 justify-center items-center"
         >
           <MagneticButton onClick={() => scrollTo("projects")} strength={0.3}>
-            <span className="group inline-flex items-center bg-gradient-to-r from-primary to-[hsl(170,80%,45%)] text-primary-foreground font-semibold px-8 py-4 text-lg rounded-xl hover:shadow-lg hover:shadow-primary/25 transition-all duration-300 cursor-pointer">
-              See Case Studies
-              <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            </span>
+            <AnimatedGradientBorder radius="0.75rem" duration={5}>
+              <span className="group inline-flex items-center bg-gradient-to-r from-primary to-[hsl(170,80%,45%)] text-primary-foreground font-semibold px-8 py-4 text-lg rounded-xl hover:shadow-lg hover:shadow-primary/25 transition-all duration-300 cursor-pointer">
+                See Case Studies
+                <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              </span>
+            </AnimatedGradientBorder>
           </MagneticButton>
           <MagneticButton onClick={() => scrollTo("contact")} strength={0.3}>
             <span className="group inline-flex items-center border border-primary/40 bg-card/30 backdrop-blur-sm hover:bg-primary/10 px-8 py-4 text-lg rounded-xl transition-all duration-300 cursor-pointer font-medium">
