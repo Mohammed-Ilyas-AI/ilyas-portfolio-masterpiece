@@ -1,9 +1,10 @@
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion } from "framer-motion";
 import AmbientDepth from "@/lib/motion/AmbientDepth";
 import { useRef } from "react";
 import { experiences } from "@/data/portfolio-data";
 import { AnimatedSection } from "@/lib/animations";
 import { Building2, MapPin, Calendar, CheckCircle2, Award } from "lucide-react";
+import AnimatedBeam from "@/lib/motion/AnimatedBeam";
 
 const TimelineItem = ({ 
   experience, 
@@ -117,13 +118,7 @@ const TimelineItem = ({
 };
 
 const ExperienceSection = () => {
-  const containerRef = useRef(null);
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start end", "end start"],
-  });
-
-  const lineHeight = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   return (
     <section id="experience" className="section-padding relative overflow-hidden" ref={containerRef}>
@@ -144,11 +139,14 @@ const ExperienceSection = () => {
 
         {/* Timeline container */}
         <div className="relative">
-          {/* Animated timeline line */}
-          <div className="absolute left-4 md:left-1/2 md:-translate-x-1/2 top-0 bottom-0 w-0.5 bg-border/30">
-            <motion.div
-              style={{ height: lineHeight }}
-              className="w-full bg-gradient-to-b from-primary via-accent to-primary"
+          {/* Animated beam timeline */}
+          <div className="absolute left-4 md:left-1/2 md:-translate-x-1/2 top-0 bottom-0 w-0.5">
+            <AnimatedBeam
+              vertical
+              scrollTarget={containerRef}
+              className="w-0.5 h-full"
+              color="hsl(var(--primary))"
+              glow
             />
           </div>
 
